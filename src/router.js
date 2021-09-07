@@ -12,5 +12,11 @@ export default new Router({
         name: "home",
         component: () => import("./components/Home")
       },
+      {
+        path: "/connectors",
+        alias: "/connectors",
+        name: "connectors",
+        component: () => import("./components/Connectors")
+      },
     ]
     });

@@ -8,9 +8,9 @@ getConnectors() {
 }
 
 postConnector(connector){
-    return axios.post(endpoint.baseURL+`appointment/`,{
+    return axios.post(endpoint.baseURL+`connectors`,{
       kind: connector.name,
-      connectorclass: connector.connectorclass,
+      connectorclass: connector.conectorclass,
       tasksMax: connector.tasksMax,
       keyConverter: connector.keyConverter,
       valueConverter: connector.valueConverter,

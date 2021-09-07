@@ -81,7 +81,8 @@ export default {
   methods:{
     retrieveConnectors() {
         ConnectorService.getConnectors().then((response) => {
-          this.connectors = response.data;
+          this.connectors = response.data.data;
+          console.log(this.connectors);
         })
         .catch((e) => {
           console.log(e);

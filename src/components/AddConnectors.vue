@@ -40,12 +40,12 @@
 
          <div class="row">
            <div class="col">
-        <v-select
+        <v-text-field
           v-model="tasksMax"
           label="Maximum Tasks"
           required
           dense>
-        </v-select>
+        </v-text-field>
           </div>
 
           <div class="col">
@@ -116,7 +116,7 @@
         width="120" 
         elevation="5" 
         color="deep-orange darken-1"
-        v-on:click.stop.prevent="savePerson">Salvează</v-btn>
+        v-on:click.stop.prevent="saveConnector">Salvează</v-btn>
        </v-layout>
 
      
@@ -159,7 +159,7 @@ export default {
       var connector = {
         name : this.name,
         conectorClass : this.conectorClass,
-        tasksMax : this.tasksMax,
+        tasksMax : parseInt(this.tasksMax),
         keyConverter : this.keyConverter,
         valueConverter : this.valueConverter,
         topics : this.topics,

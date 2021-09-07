@@ -12,7 +12,10 @@
           </v-icon>
         </v-btn>
     </v-container>
-    
+    <v-col cols="12" md="12" class="text-right">
+        <v-btn  class="white--text" to="/connectors/add" color="deep-orange darken-1">Add Connector</v-btn>
+      </v-col>
+
     <v-row align="center" class="list mx-auto">
 
       <v-col cols="12" md="5">
@@ -39,60 +42,18 @@
 
           <v-data-table
             :headers="headers"
-            :items="appointment"
+            :items="connectors"
             :search="search"
-            :hide-default-footer="false"
-            :items-per-page="5"
-            class="elevation-1">
+            >
 
-            <template slot="no-data">
-              <div></div>
-            </template>
+        
 
 
           </v-data-table>
-                    <v-dialog
-      v-model="dialog"
-      persistent
-      max-width="400"
-    >
-      <v-card>
-        <v-card-title class="text-h5 white--text deep-orange darken-1 darken-4">
-          Sunteți sigur că doriți să anulați această programare?</v-card-title>
-          <v-card-text
-          style="font-size:17px"
-          ><br/>Dacă programarea aleasă este cea pentru PRIMA DOZĂ, atât ea, cât și cea pentru rapel vor fi anulate.
-          <br/>În cazul în care programarea selectată este RAPEL sau DOZĂ UNICĂ, aveți posibilitatea de a vă reprograma!</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="grey darken-1"
-            text
-            @click="dialog = false"
-          >
-            nu
-          </v-btn>
-          <v-btn
-            color="deep-orange darken-1"
-            text
-            @click="cancellAppointment(dialogItem); snackbar.show = false"
-          >
-            da
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
         </div>
       </v-col>
     </v-row>
-      <v-snackbar 
-        :timeout="3000"
-        bottom
-        outlined
-        :color="snackbar.color" 
-        v-model="snackbar.show">
-          {{ snackbar.message }}
-      </v-snackbar>
+      
   </div>
 </template>
 <script>
@@ -103,7 +64,7 @@ export default {
   name: "connectors",
   data() {
     return {
-      
+      search:"",
       connectors: [],
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},

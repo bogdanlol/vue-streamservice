@@ -16,7 +16,7 @@
         <v-btn  class="white--text" to="/connectors/add" color="deep-orange darken-1">Add Connector</v-btn>
       </v-col>
 
-    <v-row align="center" class="list mx-auto">
+    <v-row align="center" >
 
       <v-col cols="12" md="5">
         <v-text-field
@@ -44,8 +44,42 @@
             :headers="headers"
             :items="connectors"
             :search="search"
+            :hide-default-footer="false"
+            :items-per-page="5"
+            class="elevation-1"
             >
+   
 
+
+            <template v-slot:[`item.actions`]="{ item }">
+             <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon  v-on="on"  color="blue darken-2" @click="startConnector(item.ID)">mdi-play</v-icon>
+                </template>
+                    <span>Start Connector</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" color="green darken-2" @click="editConnector(item.id)">mdi-pencil</v-icon>
+                </template>
+                  <span>Editează programarea</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon  v-on="on" color="red darken-2" @click="deleteConnector(item)">mdi-close</v-icon>
+                </template>
+                  <span>Delete Connector</span>
+              </v-tooltip>
+               <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon  v-on="on" color="red darken-2" @click="checkErrors(item)">mdi-stop</v-icon>
+                </template>
+                  <span>Stop Connector</span>
+              </v-tooltip>
+  
+            
+            </template>
         
 
 
@@ -68,17 +102,29 @@ export default {
       connectors: [],
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
-        { text: "Connector Class", value: "kind", align: "center", sortable: true, class: 'my-header-style' },
-        { text: "Tasks MAx", value: "tasks.max", align: "center", sortable: true, class: 'my-header-style' },
+        { text: "Connector Class", value: "connector.class", align: "center", sortable: true, class: 'my-header-style' },
+        { text: "Tasks Max", value: "tasks.max", align: "center", sortable: true, class: 'my-header-style' },
         { text: "Value Converter", value: "value.converter", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Key Converter", value: "key.converter", align: "center",sortable: false, class: 'my-header-style' },
         { text: "Topics", value: "topics", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Type", value: "type", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Status", value: "status", align: "center",sortable: false, class: 'my-header-style' },
+        { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
+
       ],
     };
   },
   methods:{
+    startConnector(id){
+      ConnectorService.startConnector(id).then(() => {
+         this.retrieveConnectors();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      },
+    
+
     retrieveConnectors() {
         ConnectorService.getConnectors().then((response) => {
           this.connectors = response.data.data;
@@ -95,19 +141,6 @@ export default {
     async mounted() {
         this.retrieveConnectors();
     }
-
-    // getDisplayAppointment(appointment) {
-    //   return {
-    //     id: appointment.id,
-    //     person: appointment.person.last_name + ' '+ appointment.person.name,
-    //     kind: appointment.kind,
-    //     status: appointment.status,
-    //     office: appointment.office.name,
-    //     location: appointment.office.county.name +', '+ appointment.office.city.name,
-    //     date: appointment.date,
-    //     time: appointment.time,
-    //   };
-    // },
 
 };
 </script>

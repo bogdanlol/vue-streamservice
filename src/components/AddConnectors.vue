@@ -29,12 +29,16 @@
           </div>
 
           <div class="col">
-            <v-text-field
-              v-model="connectorClass"
+            <v-select
+              :items="connectorclasses"
+              :item-text="'name'"
+              :item-value="'name'"
+              v-model="connectorclass"
+              v-on:change="changeType()"
               label="Connector Class"
               required
               dense>
-              </v-text-field>
+              </v-select>
           </div>
         </div>
 
@@ -49,21 +53,23 @@
           </div>
 
           <div class="col">
-        <v-text-field
+        <v-select
+          :items="convertors"
           v-model="keyConverter"
           label="Key Converter"
           dense>
-          </v-text-field>
+          </v-select>
           </div>
         </div>
         
         <div class="row">
            <div class="col">
-        <v-text-field
+        <v-select
+          :items="convertors"
           v-model="valueConverter"
           label="Value Converter"
           dense>
-          </v-text-field>
+          </v-select>
           </div>
         </div>
 
@@ -90,19 +96,13 @@
             <div class="col"> 
             <v-text-field
           v-model="type"
+          disabled
           label="Type"
           dense>
           </v-text-field>
         </div>
 
-        <div class="col">
-        <v-text-field
-          v-model="status"
-          label="Status"
-          dense>
-        </v-text-field>
-        </div>
-
+        
         </div>
 
        
@@ -138,8 +138,10 @@ export default {
         isFormValid: false,
         id:null,
         name: "",
-        conectorClass: "",
-        tasksMax:0,
+        connectorclasses: [],
+        convertors:[],
+        connectorclass:"",
+        tasksMax:1,
         keyConverter:"",
         valueConverter:"",
         topics:"",
@@ -153,12 +155,18 @@ export default {
   methods:
   {
    
-  
+    changeType(){
+      this.connectorclasses.forEach(element => {
+        if (element['name'] === this.connectorclass){
+          this.type=element['type'];
+        }
+      });
+    },
     saveConnector() {
       
       var connector = {
         name : this.name,
-        conectorClass : this.conectorClass,
+        connectorClass : this.connectorclass,
         tasksMax : parseInt(this.tasksMax),
         keyConverter : this.keyConverter,
         valueConverter : this.valueConverter,
@@ -180,7 +188,25 @@ export default {
           console.log(e);
         });
     },
-  }
+  },
+  async mounted(){
+    await ConnectorService.getConnectorClasses().then((response) => {
+          response.data.data.forEach(element => {
+            this.connectorclasses.push({name:element["class"],type:element["type"]})
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    await ConnectorService.getConvertors().then((response) => {
+          this.convertors=response.data.data;
+         
+        })
+        .catch((e) => {
+          console.log(e);
+        });    
+      }
+  
 };
 </script>
 

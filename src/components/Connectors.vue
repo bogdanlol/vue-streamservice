@@ -18,26 +18,28 @@
 
     <v-row align="center" >
 
-      <v-col cols="12" md="5">
+      <v-col cols="12" md="6" class="text-right">
         <v-text-field
+        
           v-model="search"
-          label="Căutare..."
+          label="Search for connector"
           single-line
           hide-details
           clearable
           filled
           rounded
           dense
+          
           append-icon="mdi-magnify">
         </v-text-field>
       </v-col>
 
       <v-col cols="12" sm="12">
-        <div class="v-card--material mt-4 v-card v-sheet theme--light">
+        <div class="v-card--material mt-4 v-card v-sheet theme--deep-orange">
           <div class="v-card__title align-start">
-            <div class="overflow-hidden mt-n9 transition-swing v-card--material__sheet v-sheet theme--light elevation-6 rounded blue-grey darken-1" style="max-width: 100%; width: 100%;">
+            <div class="overflow-hidden mt-n9 transition-swing v-card--material__sheet v-sheet theme--light elevation-6 orange accent-4 " style="max-width: 100%; width: 100%;">
               <div class="pa-8 white--text">
-                <div class="text-h4 font-weight-light"> My Connectors </div>
+                <div class="text-h4 font-weight-light"> Connectors on http://localhost:8083/ </div>
                 </div></div></div>
 
           <v-data-table
@@ -50,7 +52,9 @@
             >
    
 
-
+          <template v-slot:[`item.status`]="{ item }">
+              <v-chip :color="getColorSpots(item.status)" dark>{{item.status}}</v-chip>
+            </template>
             <template v-slot:[`item.actions`]="{ item }">
              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -115,6 +119,11 @@ export default {
     };
   },
   methods:{
+    getColorSpots(status){
+      if (status == 'RUNNING') return 'green darken-2'
+      else if (status == 'PAUSED') return 'orange darken-2'
+      else if (status == 'FAILED') return 'red darken-2'
+    },
     startConnector(id){
       ConnectorService.startConnector(id).then(() => {
          this.retrieveConnectors();
@@ -161,7 +170,7 @@ export default {
     display:inline-block;
 }
 .my-header-style {
-color: #BDBDBD !important;
+color: #020000 !important;
   font-size: 15px !important;
 }
 </style>

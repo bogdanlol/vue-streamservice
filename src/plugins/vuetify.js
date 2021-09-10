@@ -5,7 +5,7 @@ Vue.use(Vuetify);
 import ro from 'vuetify/lib/locale/ro'
 
 export default new Vuetify({
-  theme: { dark: true },
+  // theme: { dark: true },
   iconfont: 'mdi',
   lang: {
     locales: { ro },

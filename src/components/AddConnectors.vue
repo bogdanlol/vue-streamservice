@@ -14,7 +14,8 @@
   </v-container>
 
 <div class="submit-form mt-3 mx-auto">
-    <p class ="benef" align="center">Add Connector</p>
+    <p class ="benef" align="center" v-if="this.$route.name=='edit-connector'">Edit Connector</p>
+    <p class ="benef" align="center" v-else >Add Connector</p>
     <div v-if="!submitted">
       <v-form ref="form" v-model="isFormValid" lazy-validation>
         
@@ -28,8 +29,8 @@
             </v-text-field>
           </div>
 
-          <div class="col">
-            <v-select
+          <div class="col" v-if="connectorclasses.length !=0">
+            <v-select 
               :items="connectorclasses"
               :item-text="'name'"
               :item-value="'name'"
@@ -40,7 +41,16 @@
               dense>
               </v-select>
           </div>
+          <div class="col" v-else>
+             <v-text-field 
+        
+              v-model="connectorclass"
+              label="Connector Class"
+              required
+              dense>
+              </v-text-field>
         </div>
+         </div>
 
          <div class="row">
            <div class="col">
@@ -134,7 +144,6 @@ export default {
   name: "add-connector",
   data() {
     return {
-      // person: {
         isFormValid: false,
         id:null,
         name: "",
@@ -176,7 +185,19 @@ export default {
         status : this.status
 
       };
-     
+      if (this.$route.name=="edit-connector"){
+        ConnectorService.putConnector(connector,this.$route.params.id)
+        .then(() => {
+          this.$router.push('/connectors');
+          // console.log(response.data);
+          this.submitted = true;
+        })
+        .catch((e) => {
+          
+          console.log(e);
+        });
+      }
+      else{
       ConnectorService.postConnector(connector)
         .then(() => {
           this.$router.push('/connectors');
@@ -187,9 +208,29 @@ export default {
           
           console.log(e);
         });
+      }
     },
   },
   async mounted(){
+    if (this.$route.name=="edit-connector"){
+       ConnectorService.getConnectors(this.$route.params.id)
+        .then((response) => {
+          console.log(response.data.data[0]);
+          this.name=response.data.data[0] .name;
+          this.connectorclass=response.data.data[0]["connector.class"];
+          this.tasksMax=response.data.data[0]["tasks.max"];
+          this.keyConverter=response.data.data[0]["key.converter"];
+          this.valueConverter=response.data.data[0]["value.converter"];
+          this.topics=response.data.data[0].topics;
+          this.file=response.data.data[0].file;
+          this.type=response.data.data[0].type;
+
+        })
+        .catch((e) => {
+          
+          console.log(e);
+        });
+    }
     await ConnectorService.getConnectorClasses().then((response) => {
           response.data.data.forEach(element => {
             this.connectorclasses.push({name:element["class"],type:element["type"]})

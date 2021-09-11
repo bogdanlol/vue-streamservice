@@ -18,7 +18,7 @@
 
     <v-row align="center" >
 
-      <v-col cols="12" md="6" class="text-right">
+      <v-col cols="12" md="5">
         <v-text-field
         
           v-model="search"
@@ -65,13 +65,13 @@
               <v-tooltip bottom>
 
                 <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" color="green darken-2" @click="editConnector(item.id)">mdi-pencil</v-icon>
+                  <v-icon v-on="on" color="green darken-2" @click="editConnector(item.ID)">mdi-pencil</v-icon>
                 </template>
-                  <span>Editează programarea</span>
+                  <span>Edit connector</span>
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-icon  v-on="on" color="red darken-2" @click="deleteConnector(item)">mdi-close</v-icon>
+                  <v-icon  v-on="on" color="red darken-2" @click="deleteConnector(item.ID)">mdi-close</v-icon>
                 </template>
                   <span>Delete Connector</span>
               </v-tooltip>
@@ -132,8 +132,17 @@ export default {
           console.log(e);
         });
       },
-    
-
+    editConnector(id){
+      this.$router.push({ name: "edit-connector", params: { id: id } });
+    },
+    deleteConnector(id){
+      ConnectorService.deleteConnector(id).then(() => {
+          this.retrieveConnectors();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
     retrieveConnectors() {
         ConnectorService.getConnectors().then((response) => {
           this.connectors = response.data.data;

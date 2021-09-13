@@ -9,7 +9,10 @@
       </div>
 
       <v-btn class="custom-btn"  to="/connectors" text>
-        connectors
+        Connectors
+      </v-btn>
+      <v-btn class="custom-btn"  to="/connectors-plugins" text>
+        Connector Plugins
       </v-btn>
 
   

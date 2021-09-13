@@ -58,12 +58,13 @@
             <template v-slot:[`item.actions`]="{ item }">
              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-icon  v-on="on"  color="blue darken-2" @click="startConnector(item.ID)">mdi-play</v-icon>
+                  <v-icon v-if="item.status != 'RUNNING'"  v-on="on"  color="blue darken-2" @click="startConnector(item.ID)">mdi-play</v-icon>
+                  <v-icon v-else-if="item.status =='RUNNING'" v-on="on"  color="red darken-2" @click="stopConnector(item.name)">mdi-stop</v-icon>
                 </template>
                     <span>Start Connector</span>
               </v-tooltip>
               <v-tooltip bottom>
-
+              
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="green darken-2" @click="editConnector(item.ID)">mdi-pencil</v-icon>
                 </template>
@@ -75,15 +76,11 @@
                 </template>
                   <span>Delete Connector</span>
               </v-tooltip>
-               <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-icon  v-on="on" color="red darken-2" @click="checkErrors(item)">mdi-stop</v-icon>
-                </template>
-                  <span>Stop Connector</span>
-              </v-tooltip>
+              
+               </template>
+               
   
-            
-            </template>
+   
         
 
 
@@ -137,6 +134,14 @@ export default {
     },
     deleteConnector(id){
       ConnectorService.deleteConnector(id).then(() => {
+          this.retrieveConnectors();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    stopConnector(name){
+      ConnectorService.stopConnector(name).then(() => {
           this.retrieveConnectors();
         })
         .catch((e) => {

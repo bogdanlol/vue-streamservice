@@ -29,5 +29,10 @@ export default new Router({
         name: "edit-connector",
         component: () => import("./components/AddConnectors")
       },
+      {
+        path: "/connectors-plugins",
+        name: "connector-plugins",
+        component: () => import("./components/ConnectorsPlugins")
+      },
     ]
     });

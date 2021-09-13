@@ -53,5 +53,10 @@ deleteConnector(id){
   return axios.delete(endpoint.baseURL+`connectors/${id}`,{
   });
 }
+stopConnector(name){
+  return axios.post(endpoint.baseURL+`connectors/stop/${name}`,{
+  });
+}
+
 }
 export default new ConnectorService();

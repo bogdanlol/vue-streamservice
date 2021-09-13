@@ -57,6 +57,12 @@ stopConnector(name){
   return axios.post(endpoint.baseURL+`connectors/stop/${name}`,{
   });
 }
+postConnectorPlugin(formData){
+return axios.post(endpoint.baseURL+`connectors-plugins/upload`,formData,{
+    headers:{
+        'Content-Type': 'multipart/form-data'
+    }})
 
+}
 }
 export default new ConnectorService();

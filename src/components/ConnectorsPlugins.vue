@@ -60,15 +60,24 @@
           v-model="uploadDialog"
           scrollable
           @keydown.esc="uploadDialog = false"
-          max-width="470px">
-        <v-card height="330px">
+          max-width="400">
+        <v-card height="150">
         <template>
         <div class="container">
             <div class="large-12 medium-12 small-12 cell">
-            <label>File
+            <!-- <label>File
                 <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
-            </label>
-                <button v-on:click="submitFile()">Submit</button>
+            </label> -->
+              <template>
+                <v-file-input
+                v-model="files"
+                accept=".tar.gz,.zip"
+                label="Upload plugin(only accepts archives)"
+                ></v-file-input>
+              </template>
+              <div align="center">
+                <v-btn class="white--text" color="deep-orange darken-1" v-on:click="submitFile()">Submit</v-btn>
+              </div>
             </div>
         </div>
         </template>  
@@ -93,7 +102,7 @@ export default {
       uploadDialog : false,
       search:"",
       connectorsPlugins: [],
-      file: "",
+      files: [],
       headers: [
         { text: "Class", value: "class", align: "center", sortable: true, class: 'my-header-style'},
         { text: "Type", value: "type", align: "center", sortable: true, class: 'my-header-style' },
@@ -111,7 +120,7 @@ export default {
         let formData = new FormData();
         // console.log(this.$refs.file.files[0])
          
-        formData.append('file', this.$refs.file.files[0]);
+        formData.append('file', this.files);
        
         ConnectorService.postConnectorPlugin(formData).then(() => {
         this.refreshList();

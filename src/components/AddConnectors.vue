@@ -119,20 +119,37 @@
 
       </v-form>
 
-       <v-layout align-center justify-center>
+       <v-layout align-center justify-center warp>
+        <v-flex xs12 sm6  class="pa-1">
+
         <v-btn
         :disabled="!isFormValid"
         class="white--text"
         width="120" 
         elevation="5" 
         color="deep-orange darken-1"
-        v-on:click.stop.prevent="saveConnector">Salvează</v-btn>
+        v-on:click.stop.prevent="validateConnector">Validate</v-btn>
+        </v-flex>
+        <v-btn
+        :disabled="!isFormValid"
+        class="white--text"
+        width="120" 
+        elevation="5" 
+        color="deep-orange darken-1"
+        v-on:click.stop.prevent="saveConnector">Save</v-btn>
        </v-layout>
 
      
 
     </div>
-
+ <v-snackbar 
+          :timeout="3000"
+          bottom
+          outlined
+          :color="snackbar.color" 
+          v-model="snackbar.show">
+            {{ snackbar.message }}
+        </v-snackbar>
   </div>
 </div>
 </template>
@@ -158,6 +175,12 @@ export default {
         type:"",
         status:"",
         submitted: false,
+        errors:[],
+         snackbar: {
+                show: false,
+                message: null,
+                color: null,
+            },
     };
   },
  
@@ -171,6 +194,44 @@ export default {
         }
       });
     },
+    validateConnector(){
+        var connector = {
+        name : this.name,
+        connectorClass : this.connectorclass,
+        tasksMax : parseInt(this.tasksMax),
+        keyConverter : this.keyConverter,
+        valueConverter : this.valueConverter,
+        topics : this.topics,
+        file : this.file,
+        type : this.type,
+        status : this.status
+
+      };
+        ConnectorService.validateConnector(connector)
+        .then((response) => {
+          // console.log(response.data);
+          
+         if (response.data.errors){
+           this.snackbar = {
+                      message: response.data.errors,
+                      color: 'error',
+                      show: true
+                    };
+         }else{
+           this.snackbar = {
+                      message: "No errors found.",
+                      color: 'green',
+                      show: true
+                    };
+         }
+        })
+        .catch((e) => {
+          
+          console.log(e);
+        });
+      
+    },
+
     saveConnector() {
       
       var connector = {

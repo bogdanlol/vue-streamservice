@@ -49,6 +49,20 @@ putConnector(connector,id){
 
   });
 }
+validateConnector(connector){
+  return axios.put(endpoint.baseURL+`connectors-validate`,{
+    "name": connector.name,
+    "connector.class": connector.connectorClass,
+    "tasks.max": connector.tasksMax,
+    "key.converter": connector.keyConverter,
+    "value.converter": connector.valueConverter,
+    "topics": connector.topics,
+    "file": connector.file,
+    "type": connector.type,
+    "status": connector.status,
+
+  });
+}
 deleteConnector(id){
   return axios.delete(endpoint.baseURL+`connectors/${id}`,{
   });

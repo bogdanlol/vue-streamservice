@@ -52,16 +52,15 @@
             >
    
 
-          <template v-slot:[`item.status`]="{ item }">
-              <v-chip :color="getColorSpots(item.status)" dark>{{item.status}}</v-chip>
-            </template>
+      
             <template v-slot:[`item.actions`]="{ item }">
              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-icon v-if="item.status != 'RUNNING'"  v-on="on"  color="blue darken-2" @click="startKafkaConnect(item.ID)">mdi-play</v-icon>
                   <v-icon v-else-if="item.status =='RUNNING'" v-on="on"  color="red darken-2" @click="stopKafkaConnect(item.name)">mdi-stop</v-icon>
                 </template>
-                    <span>Start Worker</span>
+                    <span  v-if="item.status != 'RUNNING'">Start Worker</span>
+                    <span  v-else-if="item.status =='RUNNING'">Stop Worker</span>
               </v-tooltip>
               <v-tooltip bottom>
               
@@ -98,6 +97,9 @@ export default{
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
         { text: "IP", value: "ip", align: "center", sortable: true, class: 'my-header-style' },
+        { text: "Path", value: "path", align: "center", sortable: true, class: 'my-header-style' },
+        { text: "Status", value: "status", align: "center", sortable: true, class: 'my-header-style' },
+        
         { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
         ]
   }
@@ -105,8 +107,9 @@ export default{
   methods:{
     startKafkaConnect(id){
       workerService.postStartKafkaConnect(id).then(() => {
-          console.log(id);
-
+          
+          
+         this.$router.go()
         })
         .catch((e) => {
           console.log(e);
@@ -114,8 +117,8 @@ export default{
     },
     stopKafkaConnect(id){
       workerService.postStopKafkaConnect(id).then(() => {
-          console.log(id);
-
+         
+          this.$router.go();
         })
         .catch((e) => {
           console.log(e);

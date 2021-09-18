@@ -54,6 +54,7 @@
 
       
             <template v-slot:[`item.actions`]="{ item }">
+              
              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-icon v-if="item.status != 'RUNNING'"  v-on="on"  color="blue darken-2" @click="startKafkaConnect(item.ID)">mdi-play</v-icon>
@@ -65,9 +66,11 @@
               <v-tooltip bottom>
               
                 <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" color="green darken-2" @click="stopKafkaConnect(item.ID)">mdi-eye</v-icon>
+                  <v-icon v-on="on" v-if="workerId !== item.ID" color="green darken-2" @click="selectWorker(item)">mdi-arrow-collapse-right</v-icon>
+                  <v-icon v-on="on" v-else-if="workerId === item.ID" color="green darken-2" @click="deselectWorker()">mdi-arrow-collapse-left</v-icon>
                 </template>
-                  <span>See Worker</span>
+                  <span v-if="workerId !== item.ID">Select Worker</span>
+                  <span v-else-if="workerId=== item.ID">Deselect Worker</span>
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -94,6 +97,8 @@ export default{
     return {
       workers:[],
       search:"",
+      workerId :0,
+      selectedWorker:{},
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
         { text: "IP", value: "ip", align: "center", sortable: true, class: 'my-header-style' },
@@ -105,6 +110,15 @@ export default{
   }
   },
   methods:{
+    selectWorker(item){
+      localStorage.setItem('worker', JSON.stringify(item));
+      this.$router.go();
+
+    },
+    deselectWorker(){
+      localStorage.removeItem('worker');
+     this.$router.go();
+    },
     startKafkaConnect(id){
       workerService.postStartKafkaConnect(id).then(() => {
           
@@ -133,12 +147,21 @@ export default{
           console.log(e);
         });
       },
-      },
-  refreshList() {
+    getSelectedWorker(){
+      this.selectedWorker= JSON.parse(localStorage.getItem('worker'));
+      if (this.selectedWorker){
+        this.workerId = this.selectedWorker.ID;
+      }
+      
+    },
+    refreshList() {
       this.retrieveWorkers();
-  },
-  async mounted(){
-  this.retrieveWorkers();
+    },
+},
+
+ async mounted(){
+  this.getSelectedWorker();
+ await this.retrieveWorkers();
 }
 };
 

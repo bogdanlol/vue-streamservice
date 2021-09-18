@@ -39,7 +39,7 @@
           <div class="v-card__title align-start">
             <div class="overflow-hidden mt-n9 transition-swing v-card--material__sheet v-sheet theme--light elevation-6 orange accent-4 " style="max-width: 100%; width: 100%;">
               <div class="pa-8 white--text">
-                <div class="text-h4 font-weight-light"> Connectors on http://localhost:8083/ </div>
+                <div class="text-h4 font-weight-light"> Connectors on http://{{worker.name}}:{{worker.port}}/ </div>
                 </div></div></div>
 
           <v-data-table
@@ -101,6 +101,7 @@ export default {
     return {
       search:"",
       connectors: [],
+      worker:JSON.parse(localStorage.getItem('worker')),
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
         { text: "Connector Class", value: "connector.class", align: "center", sortable: true, class: 'my-header-style' },

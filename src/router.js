@@ -34,5 +34,10 @@ export default new Router({
         name: "connector-plugins",
         component: () => import("./components/ConnectorsPlugins")
       },
+      {
+        path: "/worker/:id",
+        name: "worker",
+        component: () => import("./components/Worker")
+      },
     ]
     });

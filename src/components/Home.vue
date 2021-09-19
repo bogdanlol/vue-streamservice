@@ -54,7 +54,12 @@
 
       
             <template v-slot:[`item.actions`]="{ item }">
-              
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon  v-on="on" color="blue darken-2" @click="seeWorker(item.ID)">mdi-eye</v-icon>
+                </template>
+                  <span>See Worker</span>
+              </v-tooltip>
              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-icon v-if="item.status != 'RUNNING'"  v-on="on"  color="blue darken-2" @click="startKafkaConnect(item.ID)">mdi-play</v-icon>
@@ -72,11 +77,12 @@
                   <span v-if="workerId !== item.ID">Select Worker</span>
                   <span v-else-if="workerId=== item.ID">Deselect Worker</span>
               </v-tooltip>
+           
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-icon  v-on="on" color="red darken-2" @click="deleteWorker(item.ID)">mdi-close</v-icon>
                 </template>
-                  <span>Delete Connector</span>
+                  <span>Delete Worker</span>
               </v-tooltip>
               
                </template>
@@ -110,6 +116,9 @@ export default{
   }
   },
   methods:{
+    seeWorker(id){
+      this.$router.push({ name: "worker", params: { id: id } });
+    },
     selectWorker(item){
       localStorage.setItem('worker', JSON.stringify(item));
       this.$router.go();

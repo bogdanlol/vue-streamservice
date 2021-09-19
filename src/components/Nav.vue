@@ -1,24 +1,26 @@
 <template>
   <v-app>
-    <v-app-bar color="orange darken-4" app dark dense>
+    
+    <v-app-bar color="white darken-4" app dark dense>
+    
       <div>
-        <v-btn class="custom-btn"  to="/home" text><v-icon>
-          mdi-view-dashboard
-        </v-icon>
+        <v-btn class="custom-btn"  to="/home" text>
+          <img class="mr-3" :src="require('../assets/inglogo.png')" to="/home" height="50"/>
         </v-btn>
+      
       </div>
 
-      <v-btn v-if="hasWorker"  class="custom-btn"  to="/connectors" text>
+      <v-btn v-if="hasWorker" color="black" class="custom-btn"  to="/connectors" text>
         Connectors
       </v-btn>
-      <v-btn  v-if="hasWorker"  class="custom-btn"  to="/connectors-plugins" text>
+      <v-btn  v-if="hasWorker"  color="black" class="custom-btn"  to="/connectors-plugins" text>
         Connector Plugins
       </v-btn>
       <v-spacer></v-spacer>
 
             <div v-if="hasWorker" 
-            color="orange darken-4"
-            class="text-h7 white--text pl-4">
+            
+            class="text-h7 black--text pl-4">
               Worker: {{worker.name}}:{{worker.port}}
               Status: {{worker.status}}
             </div>

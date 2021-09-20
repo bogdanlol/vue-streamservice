@@ -18,7 +18,18 @@
                 <h4 class="text-center">Worker Information</h4>
                 <v-card-title class="justify-center"><v-icon x-large>mdi-information-outline</v-icon></v-card-title>
                 <div class="send">
-                <p></p>
+                <div class ="row">
+                  <div class="col">Worker name </div>  <div class="col-3">{{name}}</div> 
+                </div>
+                <div class ="row">
+                  <div class="col">Connect path </div>  <div class="col">{{path}}</div> 
+                </div>
+                <div class ="row">
+                  <div class="col">Worker port </div>  <div class="col-3">{{port}}</div> 
+                </div>
+                <div class ="row">
+                  <div class="col">Worker status </div>  <div class="col">{{status}}</div> 
+                </div>
                 <br><p></p>
                 </div>
               </div>
@@ -37,6 +48,13 @@
               dark
             >
               <p align="center" style="font-size:20px;"><br>Streaming Status</p>
+              <v-data-table
+            :headers="headers"
+            :items="connectors"
+            :hide-default-footer="false"
+            :items-per-page="10"
+            class="elevation-1"
+            />
               
             </v-sheet>
           </v-col>
@@ -51,9 +69,8 @@
               color="darken-1"
               dark
             >
-            <div class="scroll">
-            
-            </div>
+           
+        
             </v-sheet>
           </v-col>
         </v-row>
@@ -69,57 +86,64 @@
               min-height="268"
             >
             <v-card class="mx-auto">
-              <v-toolbar color="blue-white darken-1" dark><v-icon small>mdi-help-circle-outline</v-icon>&nbsp;
-                <v-toolbar-title>Placeholder</v-toolbar-title>
+              <v-toolbar color="black darken-1" dark><v-icon small>mdi-help-circle-outline</v-icon>&nbsp;
+                <v-toolbar-title>Worker Properties</v-toolbar-title>
               </v-toolbar>
-
-                <v-expansion-panels
-                v-model="panel"
-                 multiple>
-                  <v-expansion-panel v-for="item in items" :key="item.title">
-                    <v-expansion-panel-header>{{ item.title }}</v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <v-card flat>
-                        <v-card-text class="px-4 py-0 grey--text">
-                          <div>{{ item.content }}</div>
-                        </v-card-text>
-                      </v-card>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>        
-                </v-expansion-panels>
+                <pre>{{workerproperties}}</pre>
+               <p></p>
             </v-card>
             </v-sheet>
           </v-col>
         </v-row>
       </v-container>
-      
+       <v-container>
+        <v-row>
+          <v-col
+            cols="12"
+            sm="12"
+          >
+            <v-sheet
+              rounded="lg"
+              min-height="268"
+            >
+            <v-card class="mx-auto">
+              <v-toolbar color="blue-white darken-1" dark><v-icon small>mdi-help-circle-outline</v-icon>&nbsp;
+                <v-toolbar-title>Error Log</v-toolbar-title>
+              </v-toolbar>
+                <pre>{{errorLog}}</pre>
+               <p></p>
+            </v-card>
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
 
-import ConnectorService from '../services/ConnectorService';
 import WorkerService from '../services/WorkerService';
 export default {
-  name: "add-connector",
+  name: "worker",
   data() {
     return {
         isFormValid: false,
         id:null,
         name: "",
-        connectorclasses: [],
-        convertors:[],
-        connectorclass:"",
-        tasksMax:1,
-        keyConverter:"",
-        valueConverter:"",
-        topics:"",
-        file:"",
-        type:"",
+        path:"",
+        port:"",
         status:"",
+        errorLog:"",
+        workerproperties:"",
+        connectors:[],
         submitted: false,
         errors:[],
+         headers: [
+        { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
+        { text: "Status", value: "status", align: "center",sortable: false, class: 'my-header-style' },
+
+      ],
          snackbar: {
                 show: false,
                 message: null,
@@ -137,98 +161,25 @@ export default {
           this.type=element['type'];
         }
       });
-    },
-    validateConnector(){
-        var connector = {
-        name : this.name,
-        connectorClass : this.connectorclass,
-        tasksMax : parseInt(this.tasksMax),
-        keyConverter : this.keyConverter,
-        valueConverter : this.valueConverter,
-        topics : this.topics,
-        file : this.file,
-        type : this.type,
-        status : this.status
+    }
 
-      };
-        ConnectorService.validateConnector(connector)
-        .then((response) => {
-          // console.log(response.data);
-          
-         if (response.data.errors){
-           this.snackbar = {
-                      message: response.data.errors,
-                      color: 'error',
-                      show: true
-                    };
-         }else{
-           this.snackbar = {
-                      message: "No errors found.",
-                      color: 'green',
-                      show: true
-                    };
-         }
-        })
-        .catch((e) => {
-          
-          console.log(e);
-        });
-      
-    },
-
-    saveConnector() {
-      
-      var connector = {
-        name : this.name,
-        connectorClass : this.connectorclass,
-        tasksMax : parseInt(this.tasksMax),
-        keyConverter : this.keyConverter,
-        valueConverter : this.valueConverter,
-        topics : this.topics,
-        file : this.file,
-        type : this.type,
-        status : this.status
-
-      };
-      if (this.$route.name=="edit-connector"){
-        ConnectorService.putConnector(connector,this.$route.params.id)
-        .then(() => {
-          this.$router.push('/connectors');
-          // console.log(response.data);
-          this.submitted = true;
-        })
-        .catch((e) => {
-          
-          console.log(e);
-        });
-      }
-      else{
-      ConnectorService.postConnector(connector)
-        .then(() => {
-          this.$router.push('/connectors');
-          // console.log(response.data);
-          this.submitted = true;
-        })
-        .catch((e) => {
-          
-          console.log(e);
-        });
-      }
-    },
   },
   async mounted(){
  
     await WorkerService.getWorker(this.$route.params.id)
         .then((response) => {
-          console.log(response.data.data[0]);
-          this.name=response.data.data[0] .name;
-          this.connectorclass=response.data.data[0]["connector.class"];
-          this.tasksMax=response.data.data[0]["tasks.max"];
-          this.keyConverter=response.data.data[0]["key.converter"];
-          this.valueConverter=response.data.data[0]["value.converter"];
-          this.topics=response.data.data[0].topics;
-          this.file=response.data.data[0].file;
-          this.type=response.data.data[0].type;
+  
+         this.name=response.data.data.worker.name;
+         this.path=response.data.data.worker.path;
+         this.port=response.data.data.worker.port;
+         if (response.data.data.connectors.length !=0){
+           this.status = "Connectors are running on this worker"
+         }else{
+           this.status = "Connectors are not running on this worker"
+         }
+        this.workerproperties = response.data.data.WorkerProperties;
+        this.errorLog = response.data.data.errorLog;
+        this.connectors = response.data.data.connectors;
 
         })
         .catch((e) => {

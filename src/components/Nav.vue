@@ -10,15 +10,15 @@
       
       </div>
 
-      <v-btn v-if="hasWorker" color="black" class="custom-btn"  to="/connectors" text>
+      <v-btn v-if="hasWorker && loggedIn" color="black" class="custom-btn"  to="/connectors" text>
         Connectors
       </v-btn>
-      <v-btn  v-if="hasWorker"  color="black" class="custom-btn"  to="/connectors-plugins" text>
+      <v-btn  v-if="hasWorker && loggedIn"  color="black" class="custom-btn"  to="/connectors-plugins" text>
         Connector Plugins
       </v-btn>
       <v-spacer></v-spacer>
 
-            <div v-if="hasWorker" 
+            <div v-if="hasWorker && loggedIn" 
             
             class="text-h7 black--text pl-4">
               Worker: {{worker.name}}:{{worker.port}}
@@ -29,7 +29,16 @@
               class="text-h7 white--text pl-4">
               Please select a worker/container in order to start using the service
             </div>
-            
+      <v-btn color="black" v-if="!loggedIn" to="/login" text>
+        Login
+      </v-btn>
+      <v-btn color="black" v-if="loggedIn" @click="logOut" to="/login" text>
+        Logout
+       <v-icon right>
+        mdi-exit-to-app 
+      </v-icon>
+      </v-btn>
+
     </v-app-bar>
     
    
@@ -45,17 +54,16 @@ export default{
   name: 'Nav',
   data(){
     return {
+      loggedIn: JSON.parse(localStorage.getItem('user') ? true : false),
       hasWorker: JSON.parse(localStorage.getItem('worker') ? true : false),
       worker:JSON.parse(localStorage.getItem('worker')),
     }
-  }}
+  },
+  methods:{
+    logOut()
+    {
+      localStorage.removeItem('user');
+    }
+  },
+  }
 </script>
-
-<style scoped>
-.custom-btn::before {
-    color: transparent
-}
-.custom-btn:hover {
-    color: #FF5722;
-}
-</style>

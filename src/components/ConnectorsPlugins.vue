@@ -102,6 +102,7 @@ export default {
       uploadDialog : false,
       search:"",
       connectorsPlugins: [],
+      worker:JSON.parse(localStorage.getItem('worker')),
       files: [],
       headers: [
         { text: "Class", value: "class", align: "center", sortable: true, class: 'my-header-style'},
@@ -122,7 +123,7 @@ export default {
          
         formData.append('file', this.files);
        
-        ConnectorService.postConnectorPlugin(formData).then(() => {
+        ConnectorService.postConnectorPlugin(formData,this.worker.ID).then(() => {
         this.refreshList();
         }).catch((e) => {
           console.log(e);
@@ -132,20 +133,24 @@ export default {
     uploadDialogOpen(){
         this.uploadDialog = true;
     },
-    retrieveConnectorsPlugins() {
-        ConnectorService.getConnectorClasses().then((response) => {
+    retrieveConnectorsPlugins(id) {
+        ConnectorService.getConnectorClasses(id).then((response) => {
           this.connectorsPlugins = response.data.data;
         })
         .catch((e) => {
           console.log(e);
         });
-      }
+      },
+      getWorker(){
+      this.worker = JSON.parse(localStorage.getItem('worker'));
+    },
     },
     refreshList() {
-      this.retrieveConnectorsPlugins();
+      this.retrieveConnectorsPlugins(this.worker.ID);
     },
     async mounted() {
-        this.retrieveConnectorsPlugins();
+       await this.getWorker();
+       this.retrieveConnectorsPlugins(this.worker.ID);
     }
 
 };

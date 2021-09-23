@@ -3,8 +3,8 @@ import endpoint from  "../http-common";
 let user = JSON.parse(localStorage.getItem('user'));
 class ConnectorService {
 
-  getConnectors() {
-      return axios.get(endpoint.baseURL+`connectors`,{
+  getConnectors(id) {
+      return axios.get(endpoint.baseURL+`${id}/connectors`,{
         headers:{
             'Authorization': 'Bearer ' + user.data.token
         },
@@ -28,24 +28,24 @@ class ConnectorService {
       },
   });
   }
-  getConnectorClasses() {
-    return axios.get(endpoint.baseURL+`connector-classes`,
+  getConnectorClasses(id) {
+    return axios.get(endpoint.baseURL+`${id}/connector-classes`,
     {
       headers:{
           'Authorization': 'Bearer ' + user.data.token
       },
   });
   }
-  getConvertors() {
-    return axios.get(endpoint.baseURL+`convertors`,
+  getConvertors(id) {
+    return axios.get(endpoint.baseURL+`${id}/convertors`,
     {
       headers:{
           'Authorization': 'Bearer ' + user.data.token
       },
   });
   }
-  startConnector(id){
-    return axios.post(endpoint.baseURL+`connectors/start/${id}`,{
+  startConnector(id,workerId){
+    return axios.post(endpoint.baseURL+`${workerId}/connectors/start/${id}`,{
       headers:{
           'Authorization': 'Bearer ' + user.data.token
       },
@@ -76,8 +76,8 @@ class ConnectorService {
       },
   });
   }
-  validateConnector(connector){
-    return axios.put(endpoint.baseURL+`connectors-validate`,{
+  validateConnector(connector,id){
+    return axios.put(endpoint.baseURL+`${id}/connectors-validate`,{
       "name": connector.name,
       "connector.class": connector.connectorClass,
       "tasks.max": connector.tasksMax,
@@ -101,15 +101,15 @@ class ConnectorService {
       },
   });
   }
-  stopConnector(name){
-    return axios.post(endpoint.baseURL+`connectors/stop/${name}`,{
+  stopConnector(name,id){
+    return axios.post(endpoint.baseURL+`${id}/connectors/stop/${name}`,{
       headers:{
           'Authorization': 'Bearer ' + user.data.token
       },
   });
   }
-  postConnectorPlugin(formData){
-  return axios.post(endpoint.baseURL+`connectors-plugins/upload`,formData,{
+  postConnectorPlugin(formData,id){
+  return axios.post(endpoint.baseURL+`${id}/connectors-plugins/upload`,formData,{
       headers:{
           'Authorization': 'Bearer ' + user.data.token,
           'Content-Type': 'multipart/form-data'

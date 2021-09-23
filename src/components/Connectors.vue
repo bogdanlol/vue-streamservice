@@ -123,7 +123,7 @@ export default {
       else if (status == 'FAILED') return 'red darken-2'
     },
     startConnector(id){
-      ConnectorService.startConnector(id).then(() => {
+      ConnectorService.startConnector(id,this.worker.ID).then(() => {
          this.retrieveConnectors();
         })
         .catch((e) => {
@@ -142,28 +142,33 @@ export default {
         });
     },
     stopConnector(name){
-      ConnectorService.stopConnector(name).then(() => {
+      ConnectorService.stopConnector(name,this.worker.id).then(() => {
           this.retrieveConnectors();
         })
         .catch((e) => {
           console.log(e);
         });
     },
-    retrieveConnectors() {
-        ConnectorService.getConnectors().then((response) => {
+    retrieveConnectors(id) {
+        ConnectorService.getConnectors(id).then((response) => {
           this.connectors = response.data.data;
           console.log(this.connectors);
         })
         .catch((e) => {
           console.log(e);
         });
-      }
+      },
+      getWorker(){
+      this.worker = JSON.parse(localStorage.getItem('worker'));
+    },
     },
     refreshList() {
-      this.retrieveConnectors();
+      this.retrieveConnectors(this.worker.ID);
     },
+    
     async mounted() {
-        this.retrieveConnectors();
+      await this.getWorker();
+      this.retrieveConnectors(this.worker.ID);
     }
 
 };

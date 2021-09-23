@@ -162,6 +162,7 @@ export default {
   data() {
     return {
         isFormValid: false,
+        worker:JSON.parse(localStorage.getItem('worker')),
         id:null,
         name: "",
         connectorclasses: [],
@@ -271,8 +272,12 @@ export default {
         });
       }
     },
+    getWorker(){
+      this.worker = JSON.parse(localStorage.getItem('worker'));
+    },
   },
   async mounted(){
+    await this.getWorker();
     if (this.$route.name=="edit-connector"){
        ConnectorService.getConnectors(this.$route.params.id)
         .then((response) => {
@@ -292,7 +297,7 @@ export default {
           console.log(e);
         });
     }
-    await ConnectorService.getConnectorClasses().then((response) => {
+    await ConnectorService.getConnectorClasses(this.worker.ID).then((response) => {
           response.data.data.forEach(element => {
             this.connectorclasses.push({name:element["class"],type:element["type"]})
           });
@@ -300,7 +305,7 @@ export default {
         .catch((e) => {
           console.log(e);
         });
-    await ConnectorService.getConvertors().then((response) => {
+    await ConnectorService.getConvertors(this.worker.ID).then((response) => {
           this.convertors=response.data.data;
          
         })

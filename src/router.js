@@ -45,5 +45,10 @@ export default new Router({
         name: "worker",
         component: () => import("./components/Worker")
       },
+      {
+        path: "/admin/",
+        name: "admin",
+        component: () => import("./components/Admin")
+      },
     ]
     });

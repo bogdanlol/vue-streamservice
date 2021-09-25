@@ -172,14 +172,15 @@ export default {
          this.name=response.data.data.worker.name;
          this.path=response.data.data.worker.path;
          this.port=response.data.data.worker.port;
-         if (response.data.data.connectors.length !=0){
+         this.workerproperties = response.data.data.WorkerProperties;
+          this.errorLog = response.data.data.errorLog;
+          this.connectors = response.data.data.connectors;
+         if (response.data.data.connectors && response.data.data.connectors.length !=0){
            this.status = "Connectors are running on this worker"
          }else{
            this.status = "Connectors are not running on this worker"
          }
-        this.workerproperties = response.data.data.WorkerProperties;
-        this.errorLog = response.data.data.errorLog;
-        this.connectors = response.data.data.connectors;
+        
 
         })
         .catch((e) => {

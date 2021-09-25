@@ -17,7 +17,7 @@
         Connector Plugins
       </v-btn>
       <v-spacer></v-spacer>
-
+      
             <div v-if="hasWorker && loggedIn" 
             
             class="text-h7 black--text pl-4">
@@ -29,6 +29,10 @@
               class="text-h7 white--text pl-4">
               Please select a worker/container in order to start using the service
             </div>
+      
+      <v-btn color="black" v-if="loggedIn && isAdmin" to="/admin" text>
+        Admin Panel 
+      </v-btn>
       <v-btn color="black" v-if="!loggedIn" to="/login" text>
         Login
       </v-btn>
@@ -49,6 +53,7 @@
 </template>
 
 <script>
+import AuthenticationService from '../services/AuthenticationService';
 
 export default{
   name: 'Nav',
@@ -57,13 +62,26 @@ export default{
       loggedIn: JSON.parse(localStorage.getItem('user') ? true : false),
       hasWorker: JSON.parse(localStorage.getItem('worker') ? true : false),
       worker:JSON.parse(localStorage.getItem('worker')),
+      isAdmin: false,
     }
   },
   methods:{
     logOut()
     {
       localStorage.removeItem('user');
+    },
+    GetAdminRights(){
+       AuthenticationService.getIsAdmin().then((response) => {
+          this.isAdmin = response.data.admin;
+        })
+        .catch(() => {
+          
+        });
     }
+
   },
+ async mounted(){
+  await this.GetAdminRights();
+ }
   }
 </script>

@@ -1,8 +1,9 @@
 <template>
+
  <div id="app">
-  <v-app id="inspire">
    
-    <v-navigation-drawer
+  <v-app id="inspire">
+   <v-navigation-drawer
     permanent
     app
     expand-on-hover
@@ -26,7 +27,7 @@
         </v-list-item>
     </v-list>
     </v-navigation-drawer>
-
+    
     <div  v-if="this.divs.users">
         <div>
     <v-container fluid>
@@ -73,7 +74,7 @@
 
           <v-data-table
             :headers="headersUsers"
-            :items="connectors"
+            :items="users"
             :search="searchUsers"
             :hide-default-footer="false"
             :items-per-page="5"
@@ -217,11 +218,12 @@
     
   </v-app>
 </div>
+
 </template>
 
 <script>
-
-
+import UserService from "../services/UserService.js"
+import TeamService from "../services/TeamService.js"
 export default {
   name: "admin",
   data () {
@@ -229,14 +231,18 @@ export default {
       searchUsers:"",
       searchTeams:"",
       worker:JSON.parse(localStorage.getItem('worker')),
-      Users:[],
-      Teams:[],
+      users:[],
+      teams:[],
       headersUsers: [
-        { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
+        { text: "Username", value: "Username", align: "center", sortable: true, class: 'my-header-style'},
+        { text: "Admin", value: "Admin", align: "center", sortable: true, class: 'my-header-style'},
+        { text: "Team", value: "", align: "center", sortable: true, class: 'my-header-style'},
+        { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
 
       ],
       headersTeams: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
+        { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
 
       ],
 
@@ -263,11 +269,29 @@ export default {
           this.type=element['type'];
         }
       });
-    }
+    },
+    retrieveUsers() {
+        UserService.getUsers().then((response) => {
+          this.users = response.data.data;
 
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      },
+      retrieveTeams() {
+        TeamService.getTeams().then((response) => {
+          this.teams = response.data.data;
+
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      },
   },
   async mounted(){
- 
+   await this.retrieveUsers();
+   await this.retrieveTeams();
   },
   
       

@@ -50,5 +50,27 @@ export default new Router({
         name: "admin",
         component: () => import("./components/Admin")
       },
+      {
+        path: "/users/add",
+        alias: "/users/add",
+        name: "add-users",
+        component: () => import("./components/AddUsers")
+      },
+      {
+        path: "/teams/add",
+        alias: "/teams/add",
+        name: "add-team",
+        component: () => import("./components/AddTeams")
+      },
+      {
+        path: "/users/edit/:id",
+        name: "edit-user",
+        component: () => import("./components/AddUsers")
+      },
+      {
+        path: "/teams/edit/:id",
+        name: "edit-team",
+        component: () => import("./components/AddTeams")
+      },
     ]
     });

@@ -19,7 +19,7 @@ class TeamService {
         })
     }
     postTeam(team) {
-        return axios.get(endpoint.baseURL+`team/create`,{
+        return axios.post(endpoint.baseURL+`team/create`,{
             "name": team.name,
         },{
             headers:{
@@ -27,6 +27,21 @@ class TeamService {
             },
         })
     }
-
+    putTeam(team,id){
+        return axios.put(endpoint.baseURL+`team/${id}`,{
+          "name": team.name,
+        },{
+          headers:{
+              'Authorization': 'Bearer ' + user.data.token
+          },
+      });
+    }
+    deleteTeam(id){
+        return axios.delete(endpoint.baseURL+`teams/${id}`,{
+          headers:{
+              'Authorization': 'Bearer ' + user.data.token
+          },
+      });
+      }
 }
 export default new TeamService();

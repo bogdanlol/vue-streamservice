@@ -18,18 +18,38 @@ class UserService {
             },
         })
     }
-    postUser(user) {
-        return axios.get(endpoint.baseURL+`user/create`,{
-            "username": user.name,
-            "password": user.password,
-            "admin": user.admin,
-            "team": user.team,
+    postUser(userObj) {
+        return axios.post(endpoint.baseURL+`user/create`,{
+            "username": userObj.name,
+            "password": userObj.password,
+            "admin": userObj.admin,
+            "teamId": userObj.team,
         },{
             headers:{
                 'Authorization': 'Bearer ' + user.data.token
             },
         })
     }
+    putUser(userObj,id){
+        return axios.put(endpoint.baseURL+`user/${id}`,{
+          "username": userObj.name,
+          "password": userObj.password,
+          "admin":userObj.admin,
+          "teamId":userObj.team
+
+        },{
+          headers:{
+              'Authorization': 'Bearer ' + user.data.token
+          },
+      });
+    }
+    deleteUser(id){
+        return axios.delete(endpoint.baseURL+`users/${id}`,{
+          headers:{
+              'Authorization': 'Bearer ' + user.data.token
+          },
+      });
+      }
 
 }
 export default new UserService();

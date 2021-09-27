@@ -82,29 +82,20 @@
             >
    
 
-          <template v-slot:[`item.status`]="{ item }">
-              <v-chip :color="getColorSpots(item.status)" dark>{{item.status}}</v-chip>
-            </template>
             <template v-slot:[`item.actions`]="{ item }">
              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-icon v-if="item.status != 'RUNNING'"  v-on="on"  color="blue darken-2" @click="startConnector(item.ID)">mdi-play</v-icon>
-                  <v-icon v-else-if="item.status =='RUNNING'" v-on="on"  color="red darken-2" @click="stopConnector(item.name)">mdi-stop</v-icon>
-                </template>
-                    <span>Start Connector</span>
-              </v-tooltip>
-              <v-tooltip bottom>
+                
               
                 <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" color="green darken-2" @click="editConnector(item.ID)">mdi-pencil</v-icon>
+                  <v-icon v-on="on" color="green darken-2" @click="editUser(item.ID)">mdi-pencil</v-icon>
                 </template>
-                  <span>Edit connector</span>
+                  <span>Edit User</span>
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-icon  v-on="on" color="red darken-2" @click="deleteConnector(item.ID)">mdi-close</v-icon>
+                  <v-icon  v-on="on" color="red darken-2" @click="deleteUser(item.ID)">mdi-close</v-icon>
                 </template>
-                  <span>Delete Connector</span>
+                  <span>Delete User</span>
               </v-tooltip>
               
                </template>
@@ -175,29 +166,20 @@
             >
    
 
-          <template v-slot:[`item.status`]="{ item }">
-              <v-chip :color="getColorSpots(item.status)" dark>{{item.status}}</v-chip>
-            </template>
             <template v-slot:[`item.actions`]="{ item }">
              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-icon v-if="item.status != 'RUNNING'"  v-on="on"  color="blue darken-2" @click="startConnector(item.ID)">mdi-play</v-icon>
-                  <v-icon v-else-if="item.status =='RUNNING'" v-on="on"  color="red darken-2" @click="stopConnector(item.name)">mdi-stop</v-icon>
-                </template>
-                    <span>Start Connector</span>
-              </v-tooltip>
-              <v-tooltip bottom>
+          
               
                 <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" color="green darken-2" @click="editConnector(item.ID)">mdi-pencil</v-icon>
+                  <v-icon v-on="on" color="green darken-2" @click="editTeam(item.ID)">mdi-pencil</v-icon>
                 </template>
-                  <span>Edit connector</span>
+                  <span>Edit team</span>
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-icon  v-on="on" color="red darken-2" @click="deleteConnector(item.ID)">mdi-close</v-icon>
+                  <v-icon  v-on="on" color="red darken-2" @click="deleteTeam(item.ID)">mdi-close</v-icon>
                 </template>
-                  <span>Delete Connector</span>
+                  <span>Delete team</span>
               </v-tooltip>
               
                </template>
@@ -263,12 +245,27 @@ export default {
         this.divs[title.toLowerCase()] = true; 
     
     },
-    changeType(){
-      this.connectorclasses.forEach(element => {
-        if (element['name'] === this.connectorclass){
-          this.type=element['type'];
-        }
-      });
+    editUser(id){
+      this.$router.push({ name: "edit-user", params: { id: id } });
+    },
+    deleteUser(id){
+      UserService.deleteUser(id).then(() => {
+          this.retrieveUsers();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    editTeam(id){
+      this.$router.push({ name: "edit-team", params: { id: id } });
+    },
+    deleteTeam(id){
+      TeamService.deleteTeam(id).then(() => {
+          this.retrieveTeams();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
     retrieveUsers() {
         UserService.getUsers().then((response) => {
@@ -290,8 +287,8 @@ export default {
       },
   },
   async mounted(){
-   await this.retrieveUsers();
-   await this.retrieveTeams();
+    this.retrieveUsers();
+    this.retrieveTeams();
   },
   
       

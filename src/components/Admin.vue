@@ -21,16 +21,22 @@
             <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
 
-        <v-list-item-content>
-            <v-list-item-title @click="showDiv(item.title)">{{ item.title }}</v-list-item-title>
+        <v-list-item-content class="px-2">
+            <v-btn 
+            outlined
+            plain
+            color="deep-gray darken-1"     
+            small
+            v-on:click="showDiv(item.title)">{{ item.title }}</v-btn>
         </v-list-item-content>
         </v-list-item>
     </v-list>
     </v-navigation-drawer>
-    
+
+     <v-container fluid>
     <div  v-if="this.divs.users">
         <div>
-    <v-container fluid>
+   
         <v-btn 
         class="mx-2"
         fab
@@ -41,7 +47,7 @@
           mdi-arrow-left-bold
           </v-icon>
         </v-btn>
-    </v-container>
+   
     <v-col cols="12" md="12" class="text-right">
         <v-btn  class="white--text" to="/users/add" color="deep-orange darken-1">Add User</v-btn>
       </v-col>
@@ -112,9 +118,11 @@
       
   </div>
     </div>
+     </v-container>
+       <v-container fluid>
     <div  v-if="this.divs.teams">
         <div>
-    <v-container fluid>
+   
         <v-btn 
         class="mx-2"
         fab
@@ -125,7 +133,7 @@
           mdi-arrow-left-bold
           </v-icon>
         </v-btn>
-    </v-container>
+    
     <v-col cols="12" md="12" class="text-right">
         <v-btn  class="white--text" to="/teams/add" color="deep-orange darken-1">Add Teams</v-btn>
       </v-col>
@@ -195,12 +203,13 @@
     </v-row>
       
   </div>
-    </div>
-
+  
+</div>
+</v-container>
     
   </v-app>
-</div>
 
+</div>
 </template>
 
 <script>
@@ -242,6 +251,7 @@ export default {
   {
     showDiv(title){
         for(var i in this.divs) this.divs[i] = false;
+       
         this.divs[title.toLowerCase()] = true; 
     
     },

@@ -23,7 +23,6 @@
 
         <v-list-item-content class="px-2">
             <v-btn 
-            outlined
             plain
             color="deep-gray darken-1"     
             small

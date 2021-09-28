@@ -18,18 +18,21 @@
       </v-btn>
       <v-spacer></v-spacer>
       
-            <div v-if="hasWorker && loggedIn" 
-            
-            class="text-h7 black--text pl-4">
+            <div v-if="hasWorker && loggedIn"> 
+            <v-btn
+            color="black"
+             to="/home"
+            class="custom-btn" text>
               Worker: {{worker.name}}:{{worker.port}}
               Status: {{worker.status}}
+            </v-btn>
             </div>
             <div v-else-if="!hasWorker"
               color="orange darken-4"
               class="text-h7 white--text pl-4">
               Please select a worker/container in order to start using the service
             </div>
-      
+            <v-spacer></v-spacer>
       <v-btn color="black" v-if="loggedIn && isAdmin" to="/admin" text>
         Admin Panel 
       </v-btn>

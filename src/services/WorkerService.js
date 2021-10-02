@@ -32,6 +32,20 @@ class WorkerService {
             },
         });
     }
+    postWorker(worker){
+        return axios.post(endpoint.baseURL+`worker`,{
+          "name": worker.name,
+          "teamId": worker.team,
+          "ip": worker.ip,
+          "path": worker.path,
+          "environment": worker.environment,
+          "type": worker.type
+      },{
+        headers:{
+            'Authorization': 'Bearer ' + user.data.token
+        },
+    });
+    }
 }
 
 export default new WorkerService();

@@ -12,9 +12,126 @@
           </v-icon>
         </v-btn>
     </v-container>
-    <v-col cols="12" md="12" class="text-right">
-        <v-btn  class="white--text" to="/worker/add" color="deep-orange darken-1">Add Worker</v-btn>
-      </v-col>
+ 
+    <v-dialog
+      v-model="addWorkerDialog"
+      persistent
+      max-width="600px"
+    >
+      <template v-slot:activator="{ on, attrs }">
+      <v-col cols="12" md="12" class="text-right">
+
+        <v-btn
+          class="white--text"
+          color="deep-orange darken-1"
+          dark
+          v-bind="attrs"
+          v-on="on"
+        >
+          Add worker
+        </v-btn>
+        </v-col>
+
+      </template>
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Add New Worker</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+                <v-text-field
+                  label="Worker name*"
+                  v-model="name"
+                  required
+                ></v-text-field>
+                 </v-col>
+                <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+
+                <div v-if="teams.length !=0 && isAdmin">
+            <v-select 
+              class="centered-input text--darken-3 mt-3" 
+              :items="teams"
+              :item-text="'name'"
+              :item-value="'id'"
+              v-model="team"
+              v-on:change="changeType()"
+              label="Team"
+              required
+              dense>
+              </v-select>
+          </div>
+
+              </v-col>
+
+              <v-col cols="12">
+                <v-text-field
+                  label="IP"
+                  v-model="ip"       
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  label="Path"
+                  v-model="path"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+              >
+                <v-select
+                  :items="['TEST', 'DEV', 'ACC', 'PRD']"
+                  v-model="environment"
+                  label="Environment"
+                  required
+                ></v-select>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+              >
+                <v-select
+                  :items="['Worker', 'Container']"
+                  v-model="type"
+                  label="Type"
+                  
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+             color="deep-orange darken-1"
+             text
+            @click="addWorkerDialog = false"
+          >
+            Close
+          </v-btn>
+          <v-btn
+             color="deep-orange darken-1"
+            text
+            @click="saveWorker"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-row align="center" >
 
@@ -97,25 +214,47 @@
 </template>
 <script>
 import workerService from "../services/WorkerService"
-
+import AuthenticationService from '../services/AuthenticationService';
+import TeamService from "../services/TeamService.js"
+import WorkerService from '../services/WorkerService';
 export default{
   data(){
     return {
       workers:[],
+      name:"",
+      ip:"",
+      path:"/opt/kafka/confluent-6.1.0",
+      team:"",
+      type :"",
       search:"",
+      environment:"",
+      teams:[],
+      addWorkerDialog:"",
       workerId :0,
       selectedWorker:{},
+      isAdmin: false,
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
         { text: "IP", value: "ip", align: "center", sortable: true, class: 'my-header-style' },
         { text: "Path", value: "path", align: "center", sortable: true, class: 'my-header-style' },
         { text: "Status", value: "status", align: "center", sortable: true, class: 'my-header-style' },
-        
+        { text: "Environment", value: "environment", align: "center", sortable: true, class: 'my-header-style' },
+        { text: "Type", value: "type", align: "center", sortable: true, class: 'my-header-style' },
         { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
         ]
   }
   },
   methods:{
+    changeType(){
+      this.teams.forEach(element => {
+  
+        if (element['name'] === this.teams){
+          this.team=element['id'];
+        }
+     
+      });
+    
+    },
     seeWorker(id){
       this.$router.push({ name: "worker", params: { id: id } });
     },
@@ -163,12 +302,64 @@ export default{
       }
       
     },
+    retrieveTeams() {
+        TeamService.getTeams().then((response) => {
+          this.teams = response.data.data;
+
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      },
     refreshList() {
       this.retrieveWorkers();
     },
+    saveWorker() {
+      var worker = {
+        name : this.name,
+        ip : this.ip,
+        path : this.path,
+        team : this.team,
+        type : this.type,
+        environment : this.environment
+
+      };
+
+        WorkerService.postWorker(worker)
+        .then(() => {
+          this.addWorkerDialog=false;
+          this.retrieveWorkers();
+          // console.log(response.data);
+          this.submitted = true;
+        })
+        .catch((e) => {
+          
+          console.log(e);
+        });
+      }
+      
+    
 },
 
  async mounted(){
+    AuthenticationService.getIsAdmin().then((response) => {
+          this.isAdmin = response.data.admin;
+        })
+        .catch(() => {
+          
+        });
+
+     await TeamService.getTeams().then((response) => {
+          response.data.data.forEach(element => {
+            this.teams.push({name:element["name"],id:element["ID"]})
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      
+      
+  
   this.getSelectedWorker();
  await this.retrieveWorkers();
 }

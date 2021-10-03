@@ -85,7 +85,21 @@
             :items-per-page="5"
             class="elevation-1"
             >
-   
+           <template v-slot:[`item.Username`]="{ item }">
+            <v-avatar
+                left
+                :color="getRandomColor()"
+                size="33">
+             
+                <span class="white--text ">{{ item.Username.slice(0,2).toUpperCase() }}</span>
+              </v-avatar>
+              
+          {{item.Username.toUpperCase()}}
+            
+            
+
+          </template>
+
 
             <template v-slot:[`item.actions`]="{ item }">
              <v-tooltip bottom>
@@ -191,11 +205,6 @@
               
                </template>
                
-  
-   
-        
-
-
           </v-data-table>
         </div>
       </v-col>
@@ -223,10 +232,11 @@ export default {
       worker:JSON.parse(localStorage.getItem('worker')),
       users:[],
       teams:[],
+      colors:['purple darken-4','red darken-4','pink darken-4','indigo darken-4','teal darken-4','orange darken-4','blue-grey darken-4'],
       headersUsers: [
-        { text: "Username", value: "Username", align: "center", sortable: true, class: 'my-header-style'},
-        { text: "Admin", value: "Admin", align: "center", sortable: true, class: 'my-header-style'},
-        { text: "Team", value: "", align: "center", sortable: true, class: 'my-header-style'},
+        { text: "Username", align: "center-justified",value: "Username", sortable: true},
+        { text: "Admin", value: "Admin", align: "center-justified", sortable: true, class: 'my-header-style'},
+        { text: "Team", value: "", align: "center-justified", sortable: true, class: 'my-header-style'},
         { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
 
       ],
@@ -248,6 +258,9 @@ export default {
  
   methods:
   {
+    getRandomColor(){
+      return this.colors[Math.floor(Math.random() * this.colors.length)]
+    },
     showDiv(title){
         for(var i in this.divs) this.divs[i] = false;
        

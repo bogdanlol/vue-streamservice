@@ -209,7 +209,16 @@
         </div>
       </v-col>
     </v-row>
-      
+    <v-overlay
+    :value="isLoading"
+    :opacity="1"
+    >
+      <v-progress-circular
+      :size="35"
+      color="amber"
+      indeterminate
+    ></v-progress-circular>
+    </v-overlay>
   </div>
 </template>
 <script>
@@ -220,6 +229,7 @@ import WorkerService from '../services/WorkerService';
 export default{
   data(){
     return {
+      isLoading:true,
       workers:[],
       name:"",
       ip:"",
@@ -362,6 +372,7 @@ export default{
   
   this.getSelectedWorker();
  await this.retrieveWorkers();
+ this.isLoading = false;
 }
 };
 

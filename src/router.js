@@ -72,5 +72,10 @@ export default new Router({
         name: "edit-team",
         component: () => import("./components/AddTeams")
       },
+      {
+        path: "/profile",
+        name: "profile",
+        component: () => import("./components/UserProfile")
+      },
     ]
     });

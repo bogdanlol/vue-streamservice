@@ -18,6 +18,13 @@ class UserService {
             },
         })
     }
+    getCurrentUser() {
+        return axios.get(endpoint.baseURL+`user/current`,{
+            headers:{
+                'Authorization': 'Bearer ' + user.data.token
+            },
+        })
+    }
     postUser(userObj) {
         return axios.post(endpoint.baseURL+`user/create`,{
             "username": userObj.name,

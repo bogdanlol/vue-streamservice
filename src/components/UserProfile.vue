@@ -1,34 +1,26 @@
 <template>
-<div>
-  <v-container fluid>
-      <v-btn 
-      class="mx-2"
-      fab
-      dark
-      small
-      @click="$router.go(-1)">
-        <v-icon dark>
-        mdi-arrow-left-bold
-        </v-icon>
-      </v-btn>
-  </v-container>
-
-<div class="submit-form mt-3 mx-auto">
-    <p class ="benef" align="center" v-if="this.$route.name=='edit-user'">Edit User</p>
-    <p class ="benef" align="center" v-else >Add User</p>
-    <div v-if="!submitted">
-      <v-form ref="form" v-model="isFormValid" lazy-validation>
-        
- 
-          <v-text-field
+    <v-container fluid>
+        <v-layout column>
+            <v-card>
+                <v-card-text>
+                    <v-flex class="mb-4">
+                           <v-layout align-center justify-center warp>
+                        <v-avatar size="50" color="deep-orange darken-1">
+                           <span class="white--text ">{{username.slice(0,2).toUpperCase()}}</span>
+                        </v-avatar>
+                    
+                        {{username.toUpperCase()}}
+                        
+                    </v-layout>
+                    </v-flex>
+                    <v-text-field
             class="centered-input text--darken-3 mt-3" 
-            v-model="name"
+            v-model="username"
             label="Name"
             required
             dense>
             </v-text-field>
-          
-          <div v-if="teams.length !=0">
+                    <div v-if="teams.length !=0">
             <v-select 
               class="centered-input text--darken-3 mt-3" 
               :items="teams"
@@ -50,18 +42,7 @@
               dense>
               </v-text-field>
         </div>
-         
-
-         <v-select 
-              class="centered-input text--darken-3 mt-3" 
-              :items="admins"
-              v-model="admin"
-              label="Admin"
-              required
-              dense>
-              </v-select>
         <v-text-field
-
           class="centered-input text--darken-3 mt-3" 
           v-model="password"
           label="Password"
@@ -69,9 +50,6 @@
           required
           dense>
         </v-text-field>
-        
-         
-
         <v-text-field
           class="centered-input text--darken-3 mt-3" 
           v-model="confirmPassword"
@@ -81,28 +59,18 @@
           required
           dense>
         </v-text-field>
-
-     
-
-       
-
-      </v-form>
-
-       <v-layout align-center justify-center warp>
-        
-        <v-btn
-        :disabled="!isFormValid"
-        class="white--text"
-        width="120" 
-        elevation="5" 
-        color="deep-orange darken-1"
-        v-on:click.stop.prevent="saveUser">Save</v-btn>
-       </v-layout>
-
-     
-
-    </div>
- <v-snackbar 
+                </v-card-text>
+                <v-card-actions>
+                     <v-layout align-center justify-center warp>
+                    <v-btn class="white--text" color="deep-orange darken-1" @click.native="save">
+                        <v-icon left dark>mdi-check</v-icon>
+                        Save Changes
+                    </v-btn>
+                      </v-layout>
+                </v-card-actions>
+            </v-card>
+        </v-layout>
+         <v-snackbar 
           :timeout="3000"
           bottom
           outlined
@@ -110,18 +78,17 @@
           v-model="snackbar.show">
             {{ snackbar.message }}
         </v-snackbar>
-  </div>
-</div>
+    </v-container>
 </template>
 
 <script>
-
-import UserService from '../services/UserService';
-import TeamService from '../services/TeamService';
-export default {
-  name: "add-users",
-  data() {
-    return {
+        import UserService from '../services/UserService';
+        import TeamService from '../services/TeamService';
+    export default {
+        pageTitle: 'My Profile',
+     
+        data () {
+            return {
         isFormValid: false,
         worker:JSON.parse(localStorage.getItem('worker')),
         id:null,
@@ -140,11 +107,9 @@ export default {
                 color: null,
             },
     };
-  },
- 
-  methods:
-  {
-   
+        },
+        methods: {
+           
     changeType(){
       this.teams.forEach(element => {
   
@@ -161,7 +126,7 @@ export default {
       if (this.password==this.confirmPassword){
 
       var user = {
-        name : this.name,
+        username : this.username,
         team : this.team,
         password : this.password,
         admin:this.admin
@@ -203,24 +168,24 @@ export default {
     getWorker(){
       this.worker = JSON.parse(localStorage.getItem('worker'));
     },
-  },
-  async mounted(){
-    await this.getWorker();
-    if (this.$route.name=="edit-user"){
-       UserService.getUser(this.$route.params.id)
+        },
+        async mounted(){
+        await this.getWorker();
+   
+       UserService.getCurrentUser()
         .then((response) => {
         
-          this.name=response.data.data.Username;
-          this.team=response.data.data.teamid;
-          this.password=response.data.data.Password;
-          this.confirmPassword= response.data.data.Password;
+          this.username=response.data.user.Username;
+          this.team=response.data.user.teamid;
+          this.password=response.data.user.Password;
+          this.confirmPassword= response.data.user.Password;
 
         })
         .catch((e) => {
           
           console.log(e);
         });
-    }
+    
     await TeamService.getTeams().then((response) => {
           response.data.data.forEach(element => {
             this.teams.push({name:element["name"],id:element["ID"]})
@@ -230,21 +195,7 @@ export default {
           console.log(e);
         });
       
-      }
-  
-};
-</script>
-
-<style scoped>
-.centered-input >>> input {
-      text-align: center
+      
+        }
     }
-.submit-form {
-  max-width: 1000px;
-}
-.benef{
-  font-weight:1000;
-  font-size: x-large;
-  padding-bottom: 10px;
-}
-</style>
+</script>

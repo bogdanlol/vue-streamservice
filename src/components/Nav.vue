@@ -55,7 +55,7 @@
                     </v-btn>
                 </template>
                 <v-list dense>
-                    <v-list-item v-for="(item, index) in services" :key="index" router :to="item.link">
+                    <v-list-item v-for="(item, index) in services" :key="index" router :to="item.link" @click="menuActionClick(item.action)">
                        <v-list-item-action class ="custom-btn" text color="black">
                         
                             <v-list-item-title class> <v-icon left>{{item.icon}}</v-icon>
@@ -76,6 +76,32 @@
     <v-main>
       <router-view />
     </v-main>
+     <v-dialog
+      v-model="settingsDialog"
+      persistent
+      max-width="320"
+      :retain-focus="false"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+         Settings
+        </v-card-title>
+        <v-card-actions>
+          <div class ="row">
+          <v-switch
+          label="Dark Theme"
+          @change="toggleDarkTheme()"
+          ></v-switch>
+          </div>
+          <v-card-actions class="justify-end">
+              <v-btn
+                text
+                @click="settingsDialog = false"
+              >Close</v-btn>
+            </v-card-actions>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -86,6 +112,7 @@ export default{
   name: 'Nav',
   data(){
     return {
+      settingsDialog:false,
       colors:['orange darken-4'],
       Username : "",
       loggedIn: JSON.parse(localStorage.getItem('user') ? true : false),
@@ -100,7 +127,7 @@ export default{
             {
                 icon :"mdi-wrench",
                 title: "Settings",
-                link: "/settings"
+                action:"settings"
             },
             {
               icon:" mdi-exit-to-app",
@@ -113,6 +140,14 @@ export default{
     }
   },
   methods:{
+    toggleDarkTheme() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+    },
+    menuActionClick(action){
+      if(action=="settings"){
+        this.settingsDialog=true;
+      }
+    },
     getRandomColor(){
       return this.colors[Math.floor(Math.random() * this.colors.length)]
     },

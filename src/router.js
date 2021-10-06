@@ -51,6 +51,11 @@ export default new Router({
         component: () => import("./components/Admin")
       },
       {
+        path: "/team-panel/",
+        name: "team-panel",
+        component: () => import("./components/Admin")
+      },
+      {
         path: "/users/add",
         alias: "/users/add",
         name: "add-users",

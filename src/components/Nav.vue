@@ -36,10 +36,16 @@
            <v-btn color="black" v-if="!loggedIn" to="/login" text>
             Login
           </v-btn>
-
-          <v-btn color="black" v-if="loggedIn && isAdmin" to="/admin" text>
+          <div v-if="loggedIn && isAdmin">
+          <v-btn color="black" to="/admin" text>
           Admin Panel 
         </v-btn>
+          </div>
+          <div v-else-if="loggedIn && teamOwner">
+              <v-btn color="black" to="/team-panel" text>
+                Team Management 
+              </v-btn>
+            </div>
         <v-menu  v-if="loggedIn"  offset-y transition="slide-x-transition" bottom right>
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn v-bind="attrs" v-on="on" text color="black">
@@ -106,15 +112,17 @@
 </template>
 
 <script>
-import AuthenticationService from '../services/AuthenticationService';
 
+import UserService from '../services/UserService';
 export default{
   name: 'Nav',
   data(){
     return {
       settingsDialog:false,
       colors:['orange darken-4'],
+      user :"",
       Username : "",
+      teamOwner:"",
       loggedIn: JSON.parse(localStorage.getItem('user') ? true : false),
       hasWorker: JSON.parse(localStorage.getItem('worker') ? true : false),
       worker:JSON.parse(localStorage.getItem('worker')),
@@ -155,27 +163,25 @@ export default{
     {
       localStorage.removeItem('user');
     },
-    GetUserName()
-    {
-    
-      let data = (JSON.parse(localStorage.getItem('user')).config.data);
-      this.Username = JSON.parse(data).username;
-      
-    },
-    GetAdminRights(){
-       AuthenticationService.getIsAdmin().then((response) => {
-          this.isAdmin = response.data.admin;
-        })
-        .catch(() => {
-          
-        });
-    },
+   
     
 
   },
  async mounted(){
-  await this.GetUserName();
-  await this.GetAdminRights();
+
+   UserService.getCurrentUser()
+        .then((response) => {
+        
+          this.user=response.data.user;
+          this.Username = response.data.user.Username
+          this.isAdmin = response.data.user.Admin;
+          this.teamOwner = response.data.teamOwner;
+
+        })
+        .catch((e) => {
+          
+          console.log(e);
+        });
  }
   }
 </script>

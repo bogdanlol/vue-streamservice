@@ -10,6 +10,13 @@ class UserService {
             },
         })
     }
+    getUsersByTeam(id) {
+        return axios.get(endpoint.baseURL+`user/team/${id}`,{
+            headers:{
+                'Authorization': 'Bearer ' + user.data.token
+            },
+        })
+    }
 
     getUser(id) {
         return axios.get(endpoint.baseURL+`user/${id}`,{

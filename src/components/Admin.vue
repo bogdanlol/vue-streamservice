@@ -3,7 +3,9 @@
  <div id="app">
    
   <v-app id="inspire">
+
    <v-navigation-drawer
+    v-if="this.$route.name=='admin'"
     permanent
     app
     expand-on-hover
@@ -74,7 +76,9 @@
           <div class="v-card__title align-start">
             <div class="overflow-hidden mt-n9 transition-swing v-card--material__sheet v-sheet theme--light elevation-6 orange accent-4 " style="max-width: 100%; width: 100%;">
               <div class="pa-8 white--text">
-                <div class="text-h4 font-weight-light"> Registered users </div>
+
+                <div class="text-h4 font-weight-light" v-if="this.$route.name=='admin'"> Registered users </div>
+                <div class="text-h4 font-weight-light" v-if="this.$route.name=='team-panel'"> Registered users for team {{teamName}} </div>
                 </div></div></div>
 
           <v-data-table
@@ -227,6 +231,8 @@ export default {
   name: "admin",
   data () {
     return {
+      teamName:"",
+      team:"",
       searchUsers:"",
       searchTeams:"",
       worker:JSON.parse(localStorage.getItem('worker')),
@@ -307,10 +313,36 @@ export default {
           console.log(e);
         });
       },
+      retrieveUsersFromTeam(team) {
+        UserService.getUsersByTeam(team).then((response) => {
+          this.users = response.data.data;
+
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      },
   },
   async mounted(){
+    if (this.$route.name=="admin"){
     this.retrieveUsers();
     this.retrieveTeams();
+    }else{
+      await  UserService.getCurrentUser()
+        .then((response) => {
+          this.teamName  = response.data.team.name;
+          this.team=response.data.user.teamId;
+
+
+        })
+        .catch((e) => {
+          
+          console.log(e);
+        });
+ 
+      this.retrieveUsersFromTeam(this.team);
+    }
+
   },
   
       

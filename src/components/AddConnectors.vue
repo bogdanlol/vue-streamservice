@@ -19,17 +19,16 @@
     <div v-if="!submitted">
       <v-form ref="form" v-model="isFormValid" lazy-validation>
         
-        <div class="row">
-          <div class="col">
+      
           <v-text-field
             v-model="name"
             label="Name"
             required
             dense>
             </v-text-field>
-          </div>
+          
 
-          <div class="col" v-if="connectorclasses.length !=0">
+          <div  v-if="connectorclasses.length !=0">
             <v-select 
               :items="connectorclasses"
               :item-text="'name'"
@@ -41,7 +40,7 @@
               dense>
               </v-select>
           </div>
-          <div class="col" v-else>
+          <div  v-else>
              <v-text-field 
         
               v-model="connectorclass"
@@ -50,10 +49,10 @@
               dense>
               </v-text-field>
         </div>
-         </div>
+         
 
-         <div class="row">
-           <div class="col">
+      
+           <div >
         <v-text-field
           v-model="tasksMax"
           label="Maximum Tasks"
@@ -62,7 +61,7 @@
         </v-text-field>
           </div>
 
-          <div class="col">
+          <div>
         <v-select
           :items="convertors"
           v-model="keyConverter"
@@ -70,10 +69,9 @@
           dense>
           </v-select>
           </div>
-        </div>
-        
-        <div class="row">
-           <div class="col">
+ 
+    
+           <div >
         <v-select
           :items="convertors"
           v-model="valueConverter"
@@ -81,10 +79,10 @@
           dense>
           </v-select>
           </div>
-        </div>
+       
 
-        <div class="row">
-         <div class="col">
+     
+         <div >
         <v-text-field
           v-model="topics"
           label="Topics"
@@ -93,24 +91,22 @@
           </v-text-field>
           </div>
           
-          <div class="col"> 
+          <div> 
         <v-text-field
           v-model="file"
           label="File"
           dense>
           </v-text-field>
           </div>
-        </div>
 
-          <div class="row">
-            <div class="col"> 
+          
+            <div > 
             <v-text-field
           v-model="type"
           disabled
           label="Type"
           dense>
           </v-text-field>
-        </div>
 
         
         </div>
@@ -118,7 +114,71 @@
        
 
       </v-form>
+      <div
+          v-for="(input, index) in definedFields"
+          :key="`definedFields-${index}`"
+          class="input wrapper flex items-center"
+        >
+        <v-card outlined shaped >
+          
+        <v-row>
+        <v-col
+          cols="12"
+          sm="6"
+        >
+          <v-text-field
+            v-model="input.field"
+            type="text"
+            
+            placeholder=" Enter name of a custom property"
+          />
+          </v-col>
+            <v-col
+          cols="12"
+          sm="6"
+        >
+           <v-text-field
+            v-model="input.value"
+            type="text"
+            
+            placeholder=" Enter the value of the custom property"
+          />
+        </v-col>
+      </v-row>
+      </v-card>
+          <svg
 
+            @click="addField(input, definedFields)"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            class="ml-2 cursor-pointer"
+          >
+            <path fill="none" d="M0 0h24v24H0z" />
+            <path
+              fill="green"
+              d="M11 11V7h2v4h4v2h-4v4h-2v-4H7v-2h4zm1 11C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"
+            />
+          </svg>
+
+          <!--          Remove Svg Icon-->
+          <svg
+            v-show="definedFields.length > 1"
+            @click="removeField(index, definedFields)"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            class="ml-2 cursor-pointer"
+          >
+            <path fill="none" d="M0 0h24v24H0z" />
+            <path
+              fill="#EC4899"
+              d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9.414l2.828-2.829 1.415 1.415L13.414 12l2.829 2.828-1.415 1.415L12 13.414l-2.828 2.829-1.415-1.415L10.586 12 7.757 9.172l1.415-1.415L12 10.586z"
+            />
+          </svg>
+          </div>
        <v-layout align-center justify-center warp>
         <v-flex xs12 sm6  class="pa-1">
 
@@ -128,7 +188,7 @@
         width="120" 
         elevation="5" 
         color="deep-orange darken-1"
-        v-on:click.stop.prevent="validateConnector">Validate</v-btn>
+        v-on:click.stop.prevent="showFields">Validate</v-btn>
         </v-flex>
         <v-btn
         :disabled="!isFormValid"
@@ -139,7 +199,7 @@
         v-on:click.stop.prevent="saveConnector">Save</v-btn>
        </v-layout>
 
-     
+
 
     </div>
  <v-snackbar 
@@ -163,6 +223,7 @@ export default {
     return {
         isFormValid: false,
         worker:JSON.parse(localStorage.getItem('worker')),
+        definedFields:[{field:"",value:""}],
         id:null,
         name: "",
         connectorclasses: [],
@@ -187,7 +248,15 @@ export default {
  
   methods:
   {
-   
+    showFields(){
+      console.log(this.definedFields);
+    },
+   addField(value, fieldType) {
+      fieldType.push({ value: "" });
+    },
+    removeField(index, fieldType) {
+      fieldType.splice(index, 1);
+    },
     changeType(){
       this.connectorclasses.forEach(element => {
         if (element['name'] === this.connectorclass){
@@ -325,5 +394,8 @@ export default {
   font-weight:1000;
   font-size: x-large;
   padding-bottom: 10px;
+}
+input {
+    width: 100%;
 }
 </style>

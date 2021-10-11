@@ -140,7 +140,7 @@ export default{
             {
               icon:" mdi-exit-to-app",
                 title: "Logout",
-                link: "/logout"
+                action:"logout"
             },
             
         
@@ -155,6 +155,9 @@ export default{
       if(action=="settings"){
         this.settingsDialog=true;
       }
+      else if(action=="logout"){
+        this.logOut();
+      }
     },
     getRandomColor(){
       return this.colors[Math.floor(Math.random() * this.colors.length)]
@@ -162,6 +165,7 @@ export default{
     logOut()
     {
       localStorage.removeItem('user');
+      this.router.push("/login")
     },
    
     

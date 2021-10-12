@@ -87,6 +87,7 @@ class ConnectorService {
       "file": connector.file,
       "type": connector.type,
       "status": connector.status,
+      "customFields":connector.customFields,
 
     },{
       headers:{

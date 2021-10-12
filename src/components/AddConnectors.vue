@@ -119,8 +119,8 @@
           :key="`definedFields-${index}`"
           class="input wrapper flex items-center"
         >
-        <v-card outlined shaped >
-          
+        <v-card  outlined >
+          <v-layout>
         <v-row>
         <v-col
           cols="12"
@@ -145,6 +145,7 @@
           />
         </v-col>
       </v-row>
+          </v-layout>
       </v-card>
           <svg
 
@@ -188,7 +189,7 @@
         width="120" 
         elevation="5" 
         color="deep-orange darken-1"
-        v-on:click.stop.prevent="showFields">Validate</v-btn>
+        v-on:click.stop.prevent="validateConnector">Validate</v-btn>
         </v-flex>
         <v-btn
         :disabled="!isFormValid"
@@ -274,10 +275,11 @@ export default {
         topics : this.topics,
         file : this.file,
         type : this.type,
-        status : this.status
+        status : this.status,
+        customFields : this.definedFields
 
       };
-        ConnectorService.validateConnector(connector)
+        ConnectorService.validateConnector(connector,this.worker.ID)
         .then((response) => {
           // console.log(response.data);
           

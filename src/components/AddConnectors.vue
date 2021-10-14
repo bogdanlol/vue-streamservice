@@ -129,7 +129,6 @@
           <v-text-field
             v-model="input.field"
             type="text"
-            
             placeholder=" Enter name of a custom property"
           />
           </v-col>
@@ -315,7 +314,8 @@ export default {
         topics : this.topics,
         file : this.file,
         type : this.type,
-        status : this.status
+        status : this.status,
+        customFields : this.definedFields
 
       };
       if (this.$route.name=="edit-connector"){

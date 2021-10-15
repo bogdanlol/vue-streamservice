@@ -108,7 +108,7 @@ export default {
         { text: "Tasks Max", value: "tasks.max", align: "center", sortable: true, class: 'my-header-style' },
         { text: "Value Converter", value: "value.converter", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Key Converter", value: "key.converter", align: "center",sortable: false, class: 'my-header-style' },
-        { text: "Topics", value: "topics", align: "center", sortable: false, class: 'my-header-style' },
+        { text: "Topic", value: "topic", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Type", value: "type", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Status", value: "status", align: "center",sortable: false, class: 'my-header-style' },
         { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },

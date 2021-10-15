@@ -84,8 +84,8 @@
      
          <div >
         <v-text-field
-          v-model="topics"
-          label="Topics"
+          v-model="topic"
+          label="Topic"
           required
           dense>
           </v-text-field>
@@ -232,7 +232,7 @@ export default {
         tasksMax:1,
         keyConverter:"",
         valueConverter:"",
-        topics:"",
+        topic:"",
         file:"",
         type:"",
         status:"",
@@ -271,7 +271,7 @@ export default {
         tasksMax : parseInt(this.tasksMax),
         keyConverter : this.keyConverter,
         valueConverter : this.valueConverter,
-        topics : this.topics,
+        topic : this.topic,
         file : this.file,
         type : this.type,
         status : this.status,
@@ -311,7 +311,7 @@ export default {
         tasksMax : parseInt(this.tasksMax),
         keyConverter : this.keyConverter,
         valueConverter : this.valueConverter,
-        topics : this.topics,
+        topic : this.topic,
         file : this.file,
         type : this.type,
         status : this.status,
@@ -350,17 +350,18 @@ export default {
   async mounted(){
     await this.getWorker();
     if (this.$route.name=="edit-connector"){
-       ConnectorService.getConnectors(this.$route.params.id)
+       ConnectorService.getConnector(this.$route.params.id)
         .then((response) => {
           console.log(response.data.data[0]);
-          this.name=response.data.data[0] .name;
-          this.connectorclass=response.data.data[0]["connector.class"];
-          this.tasksMax=response.data.data[0]["tasks.max"];
-          this.keyConverter=response.data.data[0]["key.converter"];
-          this.valueConverter=response.data.data[0]["value.converter"];
-          this.topics=response.data.data[0].topics;
-          this.file=response.data.data[0].file;
-          this.type=response.data.data[0].type;
+          this.name=response.data.data.name;
+          this.connectorclass=response.data.data["connector.class"];
+          this.tasksMax=response.data.data["tasks.max"];
+          this.keyConverter=response.data.data["key.converter"];
+          this.valueConverter=response.data.data["value.converter"];
+          this.topic=response.data.data.topic;
+          this.file=response.data.data.file;
+          this.type=response.data.data.type;
+          this.definedFields = response.data.data.customFields;
 
         })
         .catch((e) => {

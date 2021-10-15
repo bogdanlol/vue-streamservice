@@ -18,7 +18,7 @@ class ConnectorService {
         "tasks.max": connector.tasksMax,
         "key.converter": connector.keyConverter,
         "value.converter": connector.valueConverter,
-        "topics": connector.topics,
+        "topic": connector.topic,
         "file": connector.file,
         "type": connector.type,
         "status": connector.status,
@@ -66,10 +66,11 @@ class ConnectorService {
       "tasks.max": connector.tasksMax,
       "key.converter": connector.keyConverter,
       "value.converter": connector.valueConverter,
-      "topics": connector.topics,
+      "topic": connector.topic,
       "file": connector.file,
       "type": connector.type,
       "status": connector.status,
+      "customFields":connector.customFields,
 
     },{
       headers:{
@@ -84,7 +85,7 @@ class ConnectorService {
       "tasks.max": connector.tasksMax,
       "key.converter": connector.keyConverter,
       "value.converter": connector.valueConverter,
-      "topics": connector.topics,
+      "topic": connector.topic,
       "file": connector.file,
       "type": connector.type,
       "status": connector.status,

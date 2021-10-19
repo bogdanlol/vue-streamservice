@@ -18,7 +18,7 @@ class ConnectorService {
         "tasks.max": connector.tasksMax,
         "key.converter": connector.keyConverter,
         "value.converter": connector.valueConverter,
-        "topic": connector.topic,
+        "topics": connector.topics,
         "file": connector.file,
         "type": connector.type,
         "status": connector.status,
@@ -46,7 +46,7 @@ class ConnectorService {
   });
   }
   startConnector(id,workerId){
-    return axios.post(endpoint.baseURL+`${workerId}/connectors/start/${id}`,{
+    return axios.post(endpoint.baseURL+`${workerId}/connectors/start/${id}`,{},{
       headers:{
           'Authorization': 'Bearer ' + user.data.token
       },
@@ -66,7 +66,7 @@ class ConnectorService {
       "tasks.max": connector.tasksMax,
       "key.converter": connector.keyConverter,
       "value.converter": connector.valueConverter,
-      "topic": connector.topic,
+      "topics": connector.topics,
       "file": connector.file,
       "type": connector.type,
       "status": connector.status,
@@ -85,7 +85,7 @@ class ConnectorService {
       "tasks.max": connector.tasksMax,
       "key.converter": connector.keyConverter,
       "value.converter": connector.valueConverter,
-      "topic": connector.topic,
+      "topics": connector.topics,
       "file": connector.file,
       "type": connector.type,
       "status": connector.status,
@@ -105,7 +105,7 @@ class ConnectorService {
   });
   }
   stopConnector(name,id){
-    return axios.post(endpoint.baseURL+`${id}/connectors/stop/${name}`,{
+    return axios.post(endpoint.baseURL+`${id}/connectors/stop/${name}`,{},{
       headers:{
           'Authorization': 'Bearer ' + user.data.token
       },

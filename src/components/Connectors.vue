@@ -38,8 +38,8 @@
         <div class="v-card--material mt-4 v-card v-sheet theme--deep-orange">
           <div class="v-card__title align-start">
             <div class="overflow-hidden mt-n9 transition-swing v-card--material__sheet v-sheet theme--light elevation-6 orange accent-4 " style="max-width: 100%; width: 100%;">
-              <div class="pa-8 white--text">
-                <div class="text-h4 font-weight-light"> Connectors on http://{{worker.name}}:{{worker.port}}/ </div>
+              <div class="pa-10 white--text">
+                <div class="text-h5 font-weight-light"> Connectors on http://{{worker.name}}:{{worker.port}}/ </div>
                 </div></div></div>
 
           <v-data-table
@@ -61,7 +61,8 @@
                   <v-icon v-if="item.status != 'RUNNING'"  v-on="on"  color="blue darken-2" @click="startConnector(item.ID)">mdi-play</v-icon>
                   <v-icon v-else-if="item.status =='RUNNING'" v-on="on"  color="red darken-2" @click="stopConnector(item.name)">mdi-stop</v-icon>
                 </template>
-                    <span>Start Connector</span>
+                    <span v-if="item.status != 'RUNNING'">Start Connector</span>
+                     <span v-else-if="item.status =='RUNNING'">Stop Connector</span>
               </v-tooltip>
               <v-tooltip bottom>
               
@@ -108,7 +109,7 @@ export default {
         { text: "Tasks Max", value: "tasks.max", align: "center", sortable: true, class: 'my-header-style' },
         { text: "Value Converter", value: "value.converter", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Key Converter", value: "key.converter", align: "center",sortable: false, class: 'my-header-style' },
-        { text: "Topic", value: "topic", align: "center", sortable: false, class: 'my-header-style' },
+        { text: "Topics", value: "topics", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Type", value: "type", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Status", value: "status", align: "center",sortable: false, class: 'my-header-style' },
         { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
@@ -121,10 +122,13 @@ export default {
       if (status == 'RUNNING') return 'green darken-2'
       else if (status == 'PAUSED') return 'orange darken-2'
       else if (status == 'FAILED') return 'red darken-2'
+      else if (status == 'NOT RUNNING') return 'red darken-2'
+      
+      
     },
     startConnector(id){
       ConnectorService.startConnector(id,this.worker.ID).then(() => {
-         this.retrieveConnectors();
+         this.retrieveConnectors(this.worker.ID);
         })
         .catch((e) => {
           console.log(e);
@@ -142,8 +146,8 @@ export default {
         });
     },
     stopConnector(name){
-      ConnectorService.stopConnector(name,this.worker.id).then(() => {
-          this.retrieveConnectors();
+      ConnectorService.stopConnector(name,this.worker.ID).then(() => {
+          this.retrieveConnectors(this.worker.ID);
         })
         .catch((e) => {
           console.log(e);
@@ -152,6 +156,11 @@ export default {
     retrieveConnectors(id) {
         ConnectorService.getConnectors(id).then((response) => {
           this.connectors = response.data.data;
+          this.connectors.forEach(element => {
+            if (element.status ==""){
+              element.status ="NOT RUNNING";
+            }
+          });
           console.log(this.connectors);
         })
         .catch((e) => {

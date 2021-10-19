@@ -84,8 +84,8 @@
      
          <div >
         <v-text-field
-          v-model="topic"
-          label="Topic"
+          v-model="topics"
+          label="Topics"
           required
           dense>
           </v-text-field>
@@ -232,7 +232,7 @@ export default {
         tasksMax:1,
         keyConverter:"",
         valueConverter:"",
-        topic:"",
+        topics:"",
         file:"",
         type:"",
         status:"",
@@ -271,7 +271,7 @@ export default {
         tasksMax : parseInt(this.tasksMax),
         keyConverter : this.keyConverter,
         valueConverter : this.valueConverter,
-        topic : this.topic,
+        topics : this.topics,
         file : this.file,
         type : this.type,
         status : this.status,
@@ -311,7 +311,7 @@ export default {
         tasksMax : parseInt(this.tasksMax),
         keyConverter : this.keyConverter,
         valueConverter : this.valueConverter,
-        topic : this.topic,
+        topics : this.topics,
         file : this.file,
         type : this.type,
         status : this.status,
@@ -358,7 +358,7 @@ export default {
           this.tasksMax=response.data.data["tasks.max"];
           this.keyConverter=response.data.data["key.converter"];
           this.valueConverter=response.data.data["value.converter"];
-          this.topic=response.data.data.topic;
+          this.topics=response.data.data.topics;
           this.file=response.data.data.file;
           this.type=response.data.data.type;
           this.definedFields = response.data.data.customFields;

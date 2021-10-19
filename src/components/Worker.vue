@@ -93,7 +93,7 @@
 
               v-model="environment"
               v-on:change="changeType()"
-              label="Connector Class"
+              label="Environment"
               required
               dense>
               </v-select>
@@ -103,7 +103,7 @@
      
         <v-text-field
           v-model="ip"
-          label="Ip"
+          label="IP"
           required
           dense>
         </v-text-field>

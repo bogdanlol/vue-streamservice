@@ -24,7 +24,7 @@
              to="/home"
             class="custom-btn" text>
               Worker: {{worker.name}}:{{worker.port}}
-              Status: {{worker.status}}
+              
             </v-btn>
             </div>
             <div v-else-if="!hasWorker"

@@ -40,7 +40,7 @@
           <div class="v-card__title align-start">
             <div class="overflow-hidden mt-n9 transition-swing v-card--material__sheet v-sheet theme--light elevation-6 orange accent-4 " style="max-width: 100%; width: 100%;">
               <div class="pa-10 white--text">
-                <div class="text-h4 font-weight-light"> Connectors Plugins on http://localhost:8083/ </div>
+                <div class="text-h5 font-weight-light"> Connectors Plugins on http://localhost:8083/ </div>
                 </div></div></div>
 
           <v-data-table

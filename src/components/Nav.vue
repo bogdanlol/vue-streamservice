@@ -170,7 +170,8 @@ export default{
     logOut()
     {
       localStorage.removeItem('user');
-      this.router.push("/login")
+      this.$router.push("/login")
+      this.$router.go();
     },
    
     

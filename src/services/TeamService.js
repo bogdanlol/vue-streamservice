@@ -4,6 +4,11 @@ let user = JSON.parse(localStorage.getItem('user'));
 
 class TeamService {
     getTeams() {
+        try {
+            user = JSON.parse(localStorage.getItem("user"))
+          } catch {
+            return
+          }
         return axios.get(endpoint.baseURL+`teams`,{
             headers:{
                 'Authorization': 'Bearer ' + user.data.token

@@ -7,6 +7,12 @@ let user = JSON.parse(localStorage.getItem('user'));
 
 class AuthenticationService {
   getIsAdmin(){
+    let user = null;
+    try {
+      user = JSON.parse(localStorage.getItem("user"))
+    } catch {
+      return
+    }
     return axios.get(endpoint.baseURL+`user`,{
       headers:{
          'Authorization':  `Bearer `+ user.data.token

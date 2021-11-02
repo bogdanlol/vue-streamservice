@@ -85,29 +85,39 @@ export default {
   }
 },
 methods:{   
-login(){
-    AuthenticationService.postLogin(this.username,this.password)
+
+async login(){
+   await AuthenticationService.postLogin(this.username,this.password)
     .then(response =>{
       this.snackbar = {
                         message: 'Succes.',
                         color: 'success',
                         show: true
                     }
+    
       localStorage.setItem('user', JSON.stringify(response));
-      this.$router.push('/home');
+     
+  
+     let nav = this.$router.push('/');
+      if (nav){
+        this.$router.go();
+      }
+      //this.$router.go('/home');
+      
       //  console.log(response.data.access);
+      //this.$router.push('/');
     })
    .catch(e => {
      this.snackbar = {
-                      message: 'Wrong credentials!',
+                      message: 'Wrong credentials!: '+e,
                       color: 'error',
                       show: true
                     }
-    console.log(e);
    })
   },
-  onEnter: function() {
-    this.login()
+  onEnter: async function() {
+  this.login();
+  
     },
  }}
 </script>

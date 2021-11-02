@@ -243,6 +243,11 @@ export default{
       workerId :0,
       selectedWorker:{},
       isAdmin: false,
+       snackbar: {
+                show: false,
+                message: null,
+                color: null,
+            },
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
         { text: "IP", value: "ip", align: "center", sortable: true, class: 'my-header-style' },
@@ -284,7 +289,12 @@ export default{
          this.$router.go()
         })
         .catch((e) => {
-          console.log(e);
+          this.snackbar = {
+                      message: e,
+                      color: 'error',
+                      show: true
+                    }
+   
         });
     },
     stopKafkaConnect(id){
@@ -299,10 +309,14 @@ export default{
     retrieveWorkers() {
         workerService.getWorkers().then((response) => {
           this.workers = response.data.data;
-
+          this.isLoading = false;
         })
         .catch((e) => {
-          console.log(e);
+          this.snackbar = {
+                      message: e,
+                      color: 'error',
+                      show: true
+                    }
         });
       },
     getSelectedWorker(){
@@ -318,7 +332,11 @@ export default{
 
         })
         .catch((e) => {
-          console.log(e);
+           this.snackbar = {
+                      message: e,
+                      color: 'error',
+                      show: true
+                    }
         });
       },
     refreshList() {
@@ -344,7 +362,11 @@ export default{
         })
         .catch((e) => {
           
-          console.log(e);
+           this.snackbar = {
+                      message: e,
+                      color: 'error',
+                      show: true
+                    }
         });
       }
       
@@ -352,27 +374,40 @@ export default{
 },
 
  async mounted(){
-    AuthenticationService.getIsAdmin().then((response) => {
+    if(!localStorage.getItem("user")){
+      this.$router.push("/login");
+    }else{
+    
+    
+    await AuthenticationService.getIsAdmin().then((response) => {
           this.isAdmin = response.data.admin;
         })
-        .catch(() => {
-          
+        .catch((e) => {
+           this.snackbar = {
+                      message: e,
+                      color: 'error',
+                      show: true
+                    }
         });
-
-     await TeamService.getTeams().then((response) => {
+    
+    await TeamService.getTeams().then((response) => {
           response.data.data.forEach(element => {
             this.teams.push({name:element["name"],id:element["ID"]})
           });
         })
         .catch((e) => {
-          console.log(e);
+          this.snackbar = {
+                      message: e,
+                      color: 'error',
+                      show: true
+                    }
         });
       
       
   
-  this.getSelectedWorker();
- await this.retrieveWorkers();
- this.isLoading = false;
+ await  this.getSelectedWorker();
+  await this.retrieveWorkers();
+    }
 }
 };
 

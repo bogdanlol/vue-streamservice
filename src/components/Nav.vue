@@ -36,9 +36,14 @@
            <v-btn color="black" v-if="!loggedIn" to="/login" text>
             Login
           </v-btn>
-          <div v-if="loggedIn && isAdmin">
+            <div v-if="loggedIn && isAdmin">
           <v-btn color="black" to="/admin" text>
           Admin Panel 
+        </v-btn>
+          </div>
+          <div v-if="loggedIn && isAdmin">
+          <v-btn color="black" to="/stream-factory" text>
+          Stream Factory
         </v-btn>
           </div>
           <div v-else-if="loggedIn && teamOwner">
@@ -165,7 +170,8 @@ export default{
     logOut()
     {
       localStorage.removeItem('user');
-      this.router.push("/login")
+      this.$router.push("/login")
+      this.$router.go();
     },
    
     

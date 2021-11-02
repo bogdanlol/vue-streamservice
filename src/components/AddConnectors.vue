@@ -27,7 +27,8 @@
             dense>
             </v-text-field>
           
-
+          <div class ="row">
+            <div class ="col-9">
           <div  v-if="connectorclasses.length !=0">
             <v-select 
               :items="connectorclasses"
@@ -49,7 +50,16 @@
               dense>
               </v-text-field>
         </div>
-         
+            </div>
+            <div class ="col-3">
+         <v-btn
+        v-show="generate"
+        class="white--text"
+        elevation="5" 
+        color="deep-orange darken-1"
+        v-on:click.stop.prevent="GenerateTemplate">Generate Template</v-btn>
+            </div>
+        </div>
 
       
            <div >
@@ -237,6 +247,7 @@ export default {
         type:"",
         status:"",
         submitted: false,
+        generate:false,
         errors:[],
          snackbar: {
                 show: false,
@@ -251,6 +262,90 @@ export default {
     showFields(){
       console.log(this.definedFields);
     },
+    GenerateTemplate(){
+      if(this.type=="sink" && this.connectorclass.includes("file")){
+         this.name= "local-file-sink-appName-TopicName";
+         this.tasksMax= "1";
+         this.file="<path_to_Files_folder>/<fileName>";
+         this.definedFields['file.pattern']="'.'yyyy-MM-dd-HH-mm";
+         this.topics= "topicName";
+         this.valueConverter= "io.confluent.connect.avro.IngAvroConverter";
+         this.definedFields=[];
+         this.definedFields.push({
+           field:"value.converter.value.ing.serde.avro.sharedsecret",
+           value:"<sharedKey>",
+         });
+         
+        this.definedFields.push({
+           field:"value.converter.schema.registry.url",
+           value:"<schema-registry-urls>",
+         });
+      }else  if(this.type=="sink" && this.connectorclass.includes("jdbc")){
+        this.definedFields=[];
+        this.definedFields.push({
+           field:"config.providers",
+           value:"file",
+         });
+          this.definedFields.push({
+           field:"config.providers.file.class",
+           value:"org.ing.config.provider.IngFileConfigProvider",
+         });
+         
+        
+        this.name= "local-jdbc-sink-appName-TopicName";
+        this.tasksMax= "1";
+        this.file="<path_to_Files_folder>/<fileName>";
+        this.definedFields['file.pattern']="'.'yyyy-MM-dd-HH-mm";
+        this.topics= "topicName";
+        this.valueConverter= "io.confluent.connect.avro.IngAvroConverter";
+       this.definedFields.push({
+           field:"value.converter.value.ing.serde.avro.sharedsecret",
+           value:"<sharedKey>",
+         });
+         
+        this.definedFields.push({
+           field:"value.converter.schema.registry.url",
+           value:"<schema-registry-urls>",
+         });
+          this.definedFields.push({
+           field:"connection.url",
+           value:"jdbc:oracle:thin:@<dbServer>:<dbPort>/<dbServiceName>",
+         });
+         
+        this.definedFields.push({
+           field:"connection.user",
+           value:"<dbUser>",
+         });
+          this.definedFields.push({
+           field:"connection.password",
+           value:"{file:<path_to_config_folder>/pass.properties:<dbPassName>}",
+         });
+         
+        this.definedFields.push({
+           field:"table.name.format",
+           value:"<tableName>",
+         });
+         this.definedFields.push({
+           field:"errors.tolerance",
+           value:"all",
+         });
+         
+        this.definedFields.push({
+           field:"errors.deadletterqueue.topic.name",
+           value:"<appNAme>dlqtopic",
+         });
+         this.definedFields.push({
+           field:"errors.deadletterqueue.topic.replication.factor",
+           value:"1",
+         });
+         
+        this.definedFields.push({
+           field:"errors.deadletterqueue.context.headers.enable",
+           value:"true",
+         });
+      }
+    },
+    
    addField(value, fieldType) {
       fieldType.push({ value: "" });
     },
@@ -263,6 +358,7 @@ export default {
           this.type=element['type'];
         }
       });
+      this.generate=true;
     },
     validateConnector(){
         var connector = {

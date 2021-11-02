@@ -82,5 +82,10 @@ export default new Router({
         name: "profile",
         component: () => import("./components/UserProfile")
       },
+      {
+        path: "/stream-factory",
+        name: "stream-factory",
+        component: () => import("./components/StreamFactory")
+      },
     ]
     });

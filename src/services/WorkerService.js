@@ -3,7 +3,13 @@ import endpoint from  "../http-common";
 let user = JSON.parse(localStorage.getItem('user'));
 
 class WorkerService {
+    
     getWorkers() {
+        try {
+            user = JSON.parse(localStorage.getItem("user"))
+          } catch {
+            return
+          }
         return axios.get(endpoint.baseURL+`workers`,{
             headers:{
                 'Authorization': 'Bearer ' + user.data.token

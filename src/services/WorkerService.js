@@ -51,6 +51,20 @@ class WorkerService {
             'Authorization': 'Bearer ' + user.data.token
         },
     });
+
+    }
+    editWorker(worker,id){
+        return axios.put(endpoint.baseURL+`worker/${id}`,{
+            "sshKey":worker.sshKey,
+            "ip": worker.ip,
+            "environment": worker.environment,
+            
+        },{
+          headers:{
+              'Authorization': 'Bearer ' + user.data.token
+          },
+      });
+  
     }
 }
 

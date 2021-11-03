@@ -50,7 +50,7 @@
               dense>
               </v-text-field>
         </div>
-            </div>
+           </div>
             <div class ="col-3">
          <v-btn
         v-show="generate"
@@ -72,22 +72,22 @@
           </div>
 
           <div>
-        <v-select
+        <v-combobox
           :items="convertors"
           v-model="keyConverter"
           label="Key Converter"
           dense>
-          </v-select>
+        </v-combobox>
           </div>
  
     
            <div >
-        <v-select
+        <v-combobox
           :items="convertors"
           v-model="valueConverter"
           label="Value Converter"
           dense>
-          </v-select>
+        </v-combobox>
           </div>
        
 
@@ -270,6 +270,7 @@ export default {
          this.definedFields['file.pattern']="'.'yyyy-MM-dd-HH-mm";
          this.topics= "topicName";
          this.valueConverter= "io.confluent.connect.avro.IngAvroConverter";
+         this.keyConverter="org.apache.kafka.connect.storage.StringConverter";
          this.definedFields=[];
          this.definedFields.push({
            field:"value.converter.value.ing.serde.avro.sharedsecret",
@@ -298,6 +299,7 @@ export default {
         this.definedFields['file.pattern']="'.'yyyy-MM-dd-HH-mm";
         this.topics= "topicName";
         this.valueConverter= "io.confluent.connect.avro.IngAvroConverter";
+        this.keyConverter="org.apache.kafka.connect.storage.StringConverter";
        this.definedFields.push({
            field:"value.converter.value.ing.serde.avro.sharedsecret",
            value:"<sharedKey>",

@@ -68,7 +68,7 @@
           >
             <v-sheet
               rounded="lg"
-              min-height="73vh"
+              min-height="30vh"
       
               
             >
@@ -100,18 +100,27 @@
       
      
 
-     
+        
         <v-text-field
           v-model="ip"
           label="IP"
           required
           dense>
         </v-text-field>
-      
+    
 
+       <div class="text-center">
+     
          
+        <v-btn
         
+        elevation="5" 
+        color="deep-orange darken-1"
+        v-on:click.stop.prevent="SaveWorker">Save Worker Information</v-btn>
+ 
+       </div>
       </v-form>
+
         
             </v-sheet>
           </v-col>
@@ -200,7 +209,23 @@ export default {
  
   methods:
   {
-   
+    SaveWorker(){
+      var worker = {
+        environment : this.environment,
+        sshKey : this.sshKey,
+        ip : this.ip,
+       
+      };
+      WorkerService.editWorker(worker,this.$route.params.id)
+        .then(() => {
+          this.$router.go();
+
+        })
+        .catch((e) => {
+          
+          console.log(e);
+        });
+    },
     changeType(){
       this.connectorclasses.forEach(element => {
         if (element['name'] === this.connectorclass){

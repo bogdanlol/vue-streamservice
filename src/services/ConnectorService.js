@@ -119,5 +119,14 @@ class ConnectorService {
       }})
 
   }
+  startConnectors(id,connectors){
+    return axios.post(endpoint.baseURL+`${id}/connectors/start/multiple`,{
+      "connectors": connectors
+    },{
+      headers:{
+          'Authorization': 'Bearer ' + user.data.token
+      },
+  });
+}
 }
 export default new ConnectorService();

@@ -43,15 +43,37 @@
                 </div></div></div>
 
           <v-data-table
+             v-model="selected"
             :headers="headers"
             :items="connectors"
             :search="search"
+            show-select
+            item-key="ID"
+            :single-select="false"
             :hide-default-footer="false"
             :items-per-page="5"
             class="elevation-1"
             >
+           <template
+          v-if="this.selected.length !=0 ? true : false"
+          v-slot:footer
+          >
+         
    
 
+    
+          
+
+          <v-col>
+          
+         <v-btn v-on="on" class="white--text" color="deep-orange darken-1" @click="startConnectors()">Start Connectors</v-btn>
+         <v-btn v-on="on" class="white--text" color="deep-orange darken-1" @click="stopConnectors()">Stop Connectors</v-btn>
+          </v-col>
+
+      
+     
+         
+      </template>
           <template v-slot:[`item.status`]="{ item }">
               <v-chip :color="getColorSpots(item.status)" dark>{{item.status}}</v-chip>
             </template>
@@ -100,6 +122,7 @@ export default {
   name: "connectors",
   data() {
     return {
+      selected :[],
       search:"",
       connectors: [],
       worker:JSON.parse(localStorage.getItem('worker')),
@@ -118,6 +141,10 @@ export default {
     };
   },
   methods:{
+    isSelected(){
+      console.log(this.selected.length);
+      return this.selected.length !=0 ? true : false;
+    },
     getColorSpots(status){
       if (status == 'RUNNING') return 'green darken-2'
       else if (status == 'PAUSED') return 'orange darken-2'
@@ -126,6 +153,16 @@ export default {
       
       
     },
+    startConnectors(){
+      let connectors =[];
+      this.selected.forEach(element => connectors.push(element.ID));
+      ConnectorService.startConnectors(this.worker.ID,connectors).then(() => {
+         this.retrieveConnectors(this.worker.ID);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      },
     startConnector(id){
       ConnectorService.startConnector(id,this.worker.ID).then(() => {
          this.retrieveConnectors(this.worker.ID);

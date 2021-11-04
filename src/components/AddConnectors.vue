@@ -213,7 +213,7 @@
 
     </div>
  <v-snackbar 
-          :timeout="3000"
+          :timeout="6000"
           bottom
           outlined
           :color="snackbar.color" 

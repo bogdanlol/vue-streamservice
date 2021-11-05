@@ -11,11 +11,12 @@
           mdi-arrow-left-bold
           </v-icon>
         </v-btn>
+        
     </v-container>
     <v-col cols="12" md="12" class="text-right">
         <v-btn  class="white--text" to="/connectors/add" color="deep-orange darken-1">Add Connector</v-btn>
       </v-col>
-
+    
     <v-row align="center" >
 
       <v-col cols="12" md="5">
@@ -33,7 +34,7 @@
           append-icon="mdi-magnify">
         </v-text-field>
       </v-col>
-
+    
       <v-col cols="12" sm="12">
         <div class="v-card--material mt-4 v-card v-sheet theme--deep-orange">
           <div class="v-card__title align-start">
@@ -41,6 +42,14 @@
               <div class="pa-10 white--text">
                 <div class="text-h5 font-weight-light"> Connectors on http://{{worker.name}}:{{worker.port}}/ </div>
                 </div></div></div>
+                   
+  
+            <v-progress-linear
+            :active="show"
+            :indeterminate="show"
+            absolute
+            color="deep-purple accent-4"
+            ></v-progress-linear>
 
           <v-data-table
              v-model="selected"
@@ -54,8 +63,13 @@
             :items-per-page="5"
             class="elevation-1"
             >
+       
+
+        
+  
+
            <template
-          v-if="this.selected.length !=0 ? true : false"
+          v-if="this.selected.length > 1 ? true : false"
           v-slot:footer
           >
          
@@ -65,9 +79,37 @@
           
 
           <v-col>
-          
-         <v-btn v-on="on" class="white--text" color="deep-orange darken-1" @click="startConnectors()">Start Connectors</v-btn>
-         <v-btn v-on="on" class="white--text" color="deep-orange darken-1" @click="stopConnectors()">Stop Connectors</v-btn>
+          <v-row>
+         
+         <v-btn
+        class="ma-2"
+        color="deep-orange darken-1"
+        dark
+        @click="startConnectors()"
+      >
+        Start Connectors
+        <v-icon
+          color="blue darken-2"
+          right
+        >
+          mdi-play
+        </v-icon>
+      </v-btn>
+        <v-btn
+        class="ma-2"
+        color="deep-orange darken-1"
+        dark
+        @click="stopConnectors()"
+      >
+        Stop Connectors
+        <v-icon
+          color="red darken-2"
+          right
+        >
+          mdi-stop
+        </v-icon>
+      </v-btn>
+           </v-row>
           </v-col>
 
       
@@ -122,6 +164,7 @@ export default {
   name: "connectors",
   data() {
     return {
+      show:false,
       selected :[],
       search:"",
       connectors: [],
@@ -154,7 +197,9 @@ export default {
       
     },
     startConnectors(){
+
       let connectors =[];
+      this.show=true;
       this.selected.forEach(element => connectors.push(element.ID));
       ConnectorService.startConnectors(this.worker.ID,connectors).then(() => {
          this.retrieveConnectors(this.worker.ID);
@@ -163,7 +208,19 @@ export default {
           console.log(e);
         });
       },
+    stopConnectors(){
+      this.show=true;
+      let connectors =[];
+      this.selected.forEach(element => connectors.push(element.name));
+      ConnectorService.stopConnectors(this.worker.ID,connectors).then(() => {
+         this.retrieveConnectors(this.worker.ID);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      },
     startConnector(id){
+      this.show=true;
       ConnectorService.startConnector(id,this.worker.ID).then(() => {
          this.retrieveConnectors(this.worker.ID);
         })
@@ -175,6 +232,7 @@ export default {
       this.$router.push({ name: "edit-connector", params: { id: id } });
     },
     deleteConnector(id){
+      this.show=true;
       ConnectorService.deleteConnector(id).then(() => {
           this.retrieveConnectors();
         })
@@ -183,6 +241,7 @@ export default {
         });
     },
     stopConnector(name){
+      this.show=true;
       ConnectorService.stopConnector(name,this.worker.ID).then(() => {
           this.retrieveConnectors(this.worker.ID);
         })
@@ -199,6 +258,7 @@ export default {
             }
           });
           console.log(this.connectors);
+          this.show=false;
         })
         .catch((e) => {
           console.log(e);

@@ -128,5 +128,14 @@ class ConnectorService {
       },
   });
 }
+stopConnectors(id,connectors){
+  return axios.post(endpoint.baseURL+`${id}/connectors/stopMultiple`,{
+    "connectors": connectors
+  },{
+    headers:{
+        'Authorization': 'Bearer ' + user.data.token
+    },
+});
+}
 }
 export default new ConnectorService();

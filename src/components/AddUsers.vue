@@ -13,7 +13,8 @@
       </v-btn>
   </v-container>
 
-<div class="submit-form mt-3 mx-auto">
+<v-row align="center" justify="center" dense>
+  <v-col cols="4" sm="4" md="4" lg="4">
     <p class ="benef" align="center" v-if="this.$route.name=='edit-user'">Edit User</p>
     <p class ="benef" align="center" v-else >Add User</p>
     <div v-if="!submitted">
@@ -21,7 +22,7 @@
         
  
           <v-text-field
-            class="centered-input text--darken-3 mt-3" 
+
             v-model="name"
             label="Name"
             required
@@ -30,7 +31,7 @@
           
           <div v-if="teams.length !=0">
             <v-select 
-              class="centered-input text--darken-3 mt-3" 
+   
               :items="teams"
               :item-text="'name'"
               :item-value="'id'"
@@ -43,7 +44,6 @@
           </div>
           <div v-else>
              <v-text-field 
-              class="centered-input text--darken-3 mt-3" 
               v-model="teams"
               label="Team"
               required
@@ -53,37 +53,12 @@
          
 
          <v-select 
-              class="centered-input text--darken-3 mt-3" 
               :items="admins"
               v-model="admin"
               label="Admin"
               required
               dense>
               </v-select>
-        <v-text-field
-
-          class="centered-input text--darken-3 mt-3" 
-          v-model="password"
-          label="Password"
-          type="password"
-          required
-          dense>
-        </v-text-field>
-        
-         
-
-        <v-text-field
-          class="centered-input text--darken-3 mt-3" 
-          v-model="confirmPassword"
-          label="Confirm Password"
-          text-align="center"
-          type="password"
-          required
-          dense>
-        </v-text-field>
-
-     
-
        
 
       </v-form>
@@ -110,7 +85,9 @@
           v-model="snackbar.show">
             {{ snackbar.message }}
         </v-snackbar>
-  </div>
+
+</v-col>
+</v-row>
 </div>
 </template>
 
@@ -130,8 +107,6 @@ export default {
         teams: [],
         admins:[true,false],
         admin:false,
-        password:"",
-        confirmPassword:"",
         submitted: false,
         errors:[],
          snackbar: {
@@ -158,14 +133,10 @@ export default {
 
 
     saveUser() {
-      if (this.password==this.confirmPassword){
-
       var user = {
         name : this.name,
         team : this.team,
-        password : this.password,
         admin:this.admin
-
       };
       if (this.$route.name=="edit-user"){
         UserService.putUser(user,this.$route.params.id)
@@ -191,13 +162,6 @@ export default {
           console.log(e);
         });
       }
-      }else{
-           this.snackbar = {
-                        message: "Passwords don't match",
-                        color: 'error',
-                        show: true
-                    }
-      }
 
     },
     getWorker(){
@@ -211,10 +175,7 @@ export default {
         .then((response) => {
         
           this.name=response.data.data.Username;
-          this.team=response.data.data.teamid;
-          this.password=response.data.data.Password;
-          this.confirmPassword= response.data.data.Password;
-
+          this.team=response.data.data.teamId;
         })
         .catch((e) => {
           

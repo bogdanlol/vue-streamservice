@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-row align="center" justify="center" dense>
-          <v-col cols="6" sm="6" md="6" lg="6">
+          <v-col cols="4" sm="4" md="4" lg="4">
             <v-card>
                 <v-card-text>
                     <v-flex class="mb-4">

@@ -241,8 +241,9 @@ export default {
       colors:['purple darken-4','red darken-4','pink darken-4','indigo darken-4','teal darken-4','orange darken-4','blue-grey darken-4'],
       headersUsers: [
         { text: "Username", align: "center-justified",value: "Username", sortable: true},
-        { text: "Admin", value: "Admin", align: "center-justified", sortable: true, class: 'my-header-style'},
-        { text: "Team", value: "", align: "center-justified", sortable: true, class: 'my-header-style'},
+        { text: "Team", value: "teamname", align: "center-justified", sortable: true, class: 'my-header-style'},
+        { text: "Role", value: "role", align: "center-justified", sortable: true, class: 'my-header-style'},
+        
         { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
 
       ],
@@ -296,16 +297,29 @@ export default {
         });
     },
     retrieveUsers() {
-        UserService.getUsers().then((response) => {
+       return UserService.getUsers().then((response) => {
           this.users = response.data.data;
-
+          this.users.forEach(element =>{
+           
+           let obj = this.teams.find(o => o.ID === element.teamId);
+            element.teamname = obj.name;
+            if (element.Admin == true){
+              element.role = "Administrator";
+            }
+            else{
+              element.role = "User";
+            }
+            
+          })
+        
         })
         .catch((e) => {
           console.log(e);
         });
+      
       },
       retrieveTeams() {
-        TeamService.getTeams().then((response) => {
+      return  TeamService.getTeams().then((response) => {
           this.teams = response.data.data;
 
         })
@@ -322,13 +336,17 @@ export default {
           console.log(e);
         });
       },
+     
+
+    
   },
-  async mounted(){
+ async mounted(){
     if (this.$route.name=="admin"){
-    this.retrieveUsers();
-    this.retrieveTeams();
+      await this.retrieveTeams();
+      await this.retrieveUsers();
+
     }else{
-      await  UserService.getCurrentUser()
+       await  UserService.getCurrentUser()
         .then((response) => {
           this.teamName  = response.data.team.name;
           this.team=response.data.user.teamId;
@@ -340,12 +358,16 @@ export default {
           console.log(e);
         });
  
-      this.retrieveUsersFromTeam(this.team);
+    this.retrieveUsersFromTeam(this.team);
+    
+
     }
 
   },
+ 
+   
   
-      
+    
   
 };
 </script>

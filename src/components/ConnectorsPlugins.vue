@@ -114,19 +114,21 @@ export default {
   },
   methods:{
     handleFileUpload(){
-        // console.log(this.$refs.file.files[0]);
         this.file = this.$refs.file.files[0];
     },
     submitFile(){
         let formData = new FormData();
-        // console.log(this.$refs.file.files[0])
          
         formData.append('file', this.files);
        
         ConnectorService.postConnectorPlugin(formData,this.worker.ID).then(() => {
         this.refreshList();
         }).catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       
     },
@@ -138,7 +140,11 @@ export default {
           this.connectorsPlugins = response.data.data;
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       },
       getWorker(){

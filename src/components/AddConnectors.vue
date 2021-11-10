@@ -213,7 +213,7 @@
 
     </div>
  <v-snackbar 
-          :timeout="6000"
+          :timeout="3000"
           bottom
           outlined
           :color="snackbar.color" 
@@ -259,9 +259,7 @@ export default {
  
   methods:
   {
-    showFields(){
-      console.log(this.definedFields);
-    },
+    
     GenerateTemplate(){
       if(this.type=="sink" && this.connectorclass.includes("file")){
          this.name= "local-file-sink-appName-TopicName";
@@ -378,7 +376,6 @@ export default {
       };
         ConnectorService.validateConnector(connector,this.worker.ID)
         .then((response) => {
-          // console.log(response.data);
           
          if (response.data.errors){
            this.snackbar = {
@@ -396,7 +393,11 @@ export default {
         })
         .catch((e) => {
           
-          console.log(e);
+         this.snackbar = {
+                      message: e,
+                      color: 'error',
+                      show: true
+                    };
         });
       
     },
@@ -420,24 +421,30 @@ export default {
         ConnectorService.putConnector(connector,this.$route.params.id)
         .then(() => {
           this.$router.push('/connectors');
-          // console.log(response.data);
           this.submitted = true;
         })
         .catch((e) => {
           
-          console.log(e);
+         this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       }
       else{
       ConnectorService.postConnector(connector)
         .then(() => {
           this.$router.push('/connectors');
-          // console.log(response.data);
           this.submitted = true;
         })
         .catch((e) => {
           
-          console.log(e);
+            this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       }
     },
@@ -450,7 +457,6 @@ export default {
     if (this.$route.name=="edit-connector"){
        ConnectorService.getConnector(this.$route.params.id)
         .then((response) => {
-          console.log(response.data.data[0]);
           this.name=response.data.data.name;
           this.connectorclass=response.data.data["connector.class"];
           this.tasksMax=response.data.data["tasks.max"];
@@ -464,7 +470,11 @@ export default {
         })
         .catch((e) => {
           
-          console.log(e);
+            this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     }
     await ConnectorService.getConnectorClasses(this.worker.ID).then((response) => {
@@ -473,14 +483,22 @@ export default {
           });
         })
         .catch((e) => {
-          console.log(e);
+            this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     await ConnectorService.getConvertors(this.worker.ID).then((response) => {
           this.convertors=response.data.data;
          
         })
         .catch((e) => {
-          console.log(e);
+           this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });    
       }
   

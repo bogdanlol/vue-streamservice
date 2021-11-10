@@ -303,7 +303,11 @@ export default{
           this.$router.go();
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     },
     retrieveWorkers() {
@@ -357,7 +361,6 @@ export default{
         .then(() => {
           this.addWorkerDialog=false;
           this.retrieveWorkers();
-          // console.log(response.data);
           this.submitted = true;
         })
         .catch((e) => {

@@ -99,24 +99,32 @@ export default {
         TeamService.putTeam(team,this.$route.params.id)
         .then(() => {
           this.$router.push('/admin');
-          // console.log(response.data);
+          
           this.submitted = true;
         })
         .catch((e) => {
           
-          console.log(e);
+          this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       }
       else{
       TeamService.postTeam(team)
         .then(() => {
           this.$router.push('/admin');
-          // console.log(response.data);
           this.submitted = true;
         })
         .catch((e) => {
           
-          console.log(e);
+        
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       }
 
@@ -137,7 +145,12 @@ export default {
         })
         .catch((e) => {
           
-          console.log(e);
+         
+                    this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     }
 

@@ -119,6 +119,9 @@
           <template v-slot:[`item.status`]="{ item }">
               <v-chip :color="getColorSpots(item.status)" dark>{{item.status}}</v-chip>
             </template>
+             <template v-slot:[`item.type`]="{ item }">
+              <v-chip :color="getColorType(item.type)" dark>{{item.type}}</v-chip>
+            </template>
             <template v-slot:[`item.actions`]="{ item }">
              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -172,7 +175,6 @@ export default {
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
         { text: "Connector Class", value: "connector.class", align: "center", sortable: true, class: 'my-header-style' },
-        { text: "Tasks Max", value: "tasks.max", align: "center", sortable: true, class: 'my-header-style' },
         { text: "Value Converter", value: "value.converter", align: "center", sortable: false, class: 'my-header-style' },
         { text: "Key Converter", value: "key.converter", align: "center",sortable: false, class: 'my-header-style' },
         { text: "Topics", value: "topics", align: "center", sortable: false, class: 'my-header-style' },
@@ -181,11 +183,15 @@ export default {
         { text: "Actions", value: "actions", align: "center",sortable: false, class: 'my-header-style' },
 
       ],
+       snackbar: {
+                show: false,
+                message: null,
+                color: null,
+            },
     };
   },
   methods:{
     isSelected(){
-      console.log(this.selected.length);
       return this.selected.length !=0 ? true : false;
     },
     getColorSpots(status){
@@ -196,16 +202,34 @@ export default {
       
       
     },
+    getColorType(type){
+      if (type == 'sink') return 'green darken-2'
+      else if (type == 'source') return 'blue darken-2'
+  
+      
+      
+    },
+
     startConnectors(){
 
       let connectors =[];
       this.show=true;
-      this.selected.forEach(element => connectors.push(element.ID));
+      this.selected.forEach(element => {
+        if (element.status == "RUNNING"){
+          return;
+        }
+        connectors.push(element.ID)
+      });
       ConnectorService.startConnectors(this.worker.ID,connectors).then(() => {
          this.retrieveConnectors(this.worker.ID);
+         //this.$router.go();
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       },
     stopConnectors(){
@@ -214,9 +238,14 @@ export default {
       this.selected.forEach(element => connectors.push(element.name));
       ConnectorService.stopConnectors(this.worker.ID,connectors).then(() => {
          this.retrieveConnectors(this.worker.ID);
+
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       },
     startConnector(id){
@@ -225,7 +254,11 @@ export default {
          this.retrieveConnectors(this.worker.ID);
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       },
     editConnector(id){
@@ -234,10 +267,14 @@ export default {
     deleteConnector(id){
       this.show=true;
       ConnectorService.deleteConnector(id).then(() => {
-          this.retrieveConnectors();
+          this.retrieveConnectors(this.worker.ID);
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     },
     stopConnector(name){
@@ -246,7 +283,11 @@ export default {
           this.retrieveConnectors(this.worker.ID);
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     },
     retrieveConnectors(id) {
@@ -257,11 +298,14 @@ export default {
               element.status ="NOT RUNNING";
             }
           });
-          console.log(this.connectors);
           this.show=false;
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       },
       getWorker(){

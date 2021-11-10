@@ -142,24 +142,30 @@ export default {
         UserService.putUser(user,this.$route.params.id)
         .then(() => {
           this.$router.push('/admin');
-          // console.log(response.data);
+         
           this.submitted = true;
         })
         .catch((e) => {
-          
-          console.log(e);
+              this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       }
       else{
       UserService.postUser(user)
         .then(() => {
           this.$router.push('/admin');
-          // console.log(response.data);
           this.submitted = true;
         })
         .catch((e) => {
-          
-          console.log(e);
+             
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       }
 
@@ -179,7 +185,11 @@ export default {
         })
         .catch((e) => {
           
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     }
     await TeamService.getTeams().then((response) => {
@@ -188,7 +198,11 @@ export default {
           });
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       
       }

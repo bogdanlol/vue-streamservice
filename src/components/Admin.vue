@@ -259,7 +259,12 @@ export default {
         { title: 'Stats', icon: 'mdi-chart-bar' },
       ],
       right: null,
-     divs : {users:true,teams:false}
+     divs : {users:true,teams:false},
+      snackbar: {
+                show: false,
+                message: null,
+                color: null,
+            },
     }
   },
  
@@ -282,7 +287,11 @@ export default {
           this.retrieveUsers();
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     },
     editTeam(id){
@@ -293,7 +302,11 @@ export default {
           this.retrieveTeams();
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     },
     retrieveUsers() {
@@ -314,7 +327,11 @@ export default {
         
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       
       },
@@ -324,7 +341,11 @@ export default {
 
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       },
       retrieveUsersFromTeam(team) {
@@ -333,7 +354,11 @@ export default {
 
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       },
      
@@ -355,7 +380,11 @@ export default {
         })
         .catch((e) => {
           
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
  
     this.retrieveUsersFromTeam(this.team);

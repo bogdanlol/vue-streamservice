@@ -142,12 +142,15 @@
         UserService.putUser(user,this.id)
         .then(() => {
           this.$router.push('/home');
-          // console.log(response.data);
           this.submitted = true;
         })
         .catch((e) => {
           
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       
       }else{
@@ -167,12 +170,15 @@
         UserService.putUser(userN,this.id)
         .then(() => {
           this.$router.push('/home');
-          // console.log(response.data);
           this.submitted = true;
         })
         .catch((e) => {
           
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       
       
@@ -194,7 +200,11 @@
         })
         .catch((e) => {
           
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     
     await TeamService.getTeams().then((response) => {
@@ -203,7 +213,11 @@
           });
         })
         .catch((e) => {
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
       
       

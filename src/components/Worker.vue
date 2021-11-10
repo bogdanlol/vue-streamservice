@@ -223,7 +223,11 @@ export default {
         })
         .catch((e) => {
           
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     },
     changeType(){
@@ -260,7 +264,11 @@ export default {
         })
         .catch((e) => {
           
-          console.log(e);
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
         });
     }
   

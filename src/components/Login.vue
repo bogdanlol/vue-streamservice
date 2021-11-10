@@ -102,10 +102,6 @@ async login(){
       if (nav){
         this.$router.go();
       }
-      //this.$router.go('/home');
-      
-      //  console.log(response.data.access);
-      //this.$router.push('/');
     })
    .catch(e => {
      this.snackbar = {

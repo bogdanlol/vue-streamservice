@@ -131,24 +131,18 @@ export default {
   },
   methods:{
     handleConfigFileUpload(){
-        // console.log(this.$refs.file.files[0]);
         this.files.push(this.config);
         this.uploadConfig = false;
     },
     handleInputFileUpload(){
-        // console.log(this.$refs.file.files[0]);
         this.files.push(this.input);
         this.uploadInput = false;
-        // this.file = this.$refs.file.files[0];
     },
     generateSolution(){
         let formData = new FormData();
-        // console.log(this.$refs.file.files[0])
         formData.append('config', this.config);
         formData.append('input',this.input);
       
-        console.log(formData);
-        // formData.append('file', this.files);
        StreamFactoryService.postStreamFactoryService(formData).then((response)=>{
             var fileURL = window.URL.createObjectURL(new Blob([response.data]));
             var fileLink = document.createElement('a');
@@ -159,7 +153,11 @@ export default {
    
      fileLink.click();
        }).catch((e)=>{
-           console.log(e);
+          this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
        });
      
       

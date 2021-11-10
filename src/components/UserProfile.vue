@@ -1,6 +1,7 @@
 <template>
-    <v-container fluid>
-        <v-layout column>
+    <v-container>
+        <v-row align="center" justify="center" dense>
+          <v-col cols="6" sm="6" md="6" lg="6">
             <v-card>
                 <v-card-text>
                     <v-flex class="mb-4">
@@ -19,8 +20,10 @@
             label="Name"
             required
             dense>
+        
             </v-text-field>
                     <div v-if="teams.length !=0">
+                      
             <v-select 
               class="centered-input text--darken-3 mt-3" 
               :items="teams"
@@ -32,6 +35,7 @@
               required
               dense>
               </v-select>
+              
           </div>
           <div v-else>
              <v-text-field 
@@ -59,17 +63,20 @@
           required
           dense>
         </v-text-field>
+        
                 </v-card-text>
                 <v-card-actions>
                      <v-layout align-center justify-center warp>
-                    <v-btn class="white--text" color="deep-orange darken-1" @click.native="save">
+                    <v-btn class="white--text" color="deep-orange darken-1" @click.native="saveUser">
                         <v-icon left dark>mdi-check</v-icon>
                         Save Changes
                     </v-btn>
                       </v-layout>
                 </v-card-actions>
             </v-card>
-        </v-layout>
+       
+          </v-col>
+        </v-row>
          <v-snackbar 
           :timeout="3000"
           bottom
@@ -85,13 +92,13 @@
         import UserService from '../services/UserService';
         import TeamService from '../services/TeamService';
     export default {
-        pageTitle: 'My Profile',
+        pageTitle: 'my-profile',
      
         data () {
             return {
         isFormValid: false,
         worker:JSON.parse(localStorage.getItem('worker')),
-        id:null,
+        id:"",
         username: "",
         team:"",
         teams: [],
@@ -121,21 +128,20 @@
     
     },
 
-
     saveUser() {
+      if (this.password && this.confirmPassword){
       if (this.password==this.confirmPassword){
 
       var user = {
         username : this.username,
         team : this.team,
         password : this.password,
-        admin:this.admin
 
       };
-      if (this.$route.name=="edit-user"){
-        UserService.putUser(user,this.$route.params.id)
+    
+        UserService.putUser(user,this.id)
         .then(() => {
-          this.$router.push('/admin');
+          this.$router.push('/home');
           // console.log(response.data);
           this.submitted = true;
         })
@@ -143,19 +149,7 @@
           
           console.log(e);
         });
-      }
-      else{
-      UserService.postUser(user)
-        .then(() => {
-          this.$router.push('/admin');
-          // console.log(response.data);
-          this.submitted = true;
-        })
-        .catch((e) => {
-          
-          console.log(e);
-        });
-      }
+      
       }else{
            this.snackbar = {
                         message: "Passwords don't match",
@@ -163,7 +157,26 @@
                         show: true
                     }
       }
-
+      }
+      else {
+        var userN = {
+        username : this.username,
+        team : this.team,
+      };
+       
+        UserService.putUser(userN,this.id)
+        .then(() => {
+          this.$router.push('/home');
+          // console.log(response.data);
+          this.submitted = true;
+        })
+        .catch((e) => {
+          
+          console.log(e);
+        });
+      
+      
+      }
     },
     getWorker(){
       this.worker = JSON.parse(localStorage.getItem('worker'));
@@ -174,12 +187,10 @@
    
        UserService.getCurrentUser()
         .then((response) => {
-        
+          
           this.username=response.data.user.Username;
-          this.team=response.data.user.teamid;
-          this.password=response.data.user.Password;
-          this.confirmPassword= response.data.user.Password;
-
+          this.team=response.data.user.teamId;
+          this.id = response.data.user.ID;
         })
         .catch((e) => {
           

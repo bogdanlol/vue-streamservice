@@ -13,13 +13,11 @@
         </v-btn>
         
     </v-container>
-    <v-col cols="12" md="12" class="text-right">
-        <v-btn  class="white--text" to="/connectors/add" color="deep-orange darken-1">Add Connector</v-btn>
-      </v-col>
+   
     
     <v-row align="center" >
-
-      <v-col cols="12" md="5">
+     
+      <v-col cols="col-6">
         <v-text-field
         
           v-model="search"
@@ -33,8 +31,17 @@
           
           append-icon="mdi-magnify">
         </v-text-field>
+        
       </v-col>
-    
+       <v-col cols="col">
+         <v-btn text @click="showCategories()">
+        <v-icon >mdi-filter </v-icon>
+        Categories
+        </v-btn>
+      </v-col>
+        <v-col cols="col" class="text-right">
+        <v-btn  class="white--text" to="/connectors/add" color="deep-orange darken-1">Add Connector</v-btn>
+      </v-col>
       <v-col cols="12" sm="12">
         <div class="v-card--material mt-4 v-card v-sheet theme--deep-orange">
           <div class="v-card__title align-start">
@@ -154,23 +161,61 @@
 
           </v-data-table>
         </div>
+        <v-dialog
+          v-model="catsDialog"
+          @keydown.esc="this.catsDialog = false"
+          max-width="400">  
+          <v-card>
+        <v-card-title >
+          Categories
+        </v-card-title>
+
+        <v-card-text>
+          <v-combobox
+          multiple
+          v-model="selectedCategories"
+          :items="categories"
+          :item-text="'name'"
+          :item-value="'ID'"
+          >
+            
+          </v-combobox>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="filterConnectors(selectedCategories)"
+          >
+            Filter
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+         
+          </v-dialog>
       </v-col>
     </v-row>
-      
   </div>
+  
 </template>
 <script>
 
 import ConnectorService from "../services/ConnectorService"
-
+import CategoryService from "../services/CategoryService"
 export default {
   name: "connectors",
   data() {
     return {
+      selectedCategories:[],
+      catsDialog:false,
       show:false,
       selected :[],
       search:"",
       connectors: [],
+      categories:[],
       worker:JSON.parse(localStorage.getItem('worker')),
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
@@ -191,6 +236,25 @@ export default {
     };
   },
   methods:{
+    filterConnectors(categories){
+      let categoriesID = [];
+      categories.forEach(element => {
+        categoriesID.push(element.ID);
+      });
+        CategoryService.getConnectorByCategories(categoriesID).then((response) => {
+          this.connectors = response.data.data;
+        })
+        .catch((e) => {
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
+        });
+    },
+    showCategories(){
+      this.catsDialog=true;
+    },
     isSelected(){
       return this.selected.length !=0 ? true : false;
     },
@@ -308,6 +372,19 @@ export default {
                     };
         });
       },
+      retrieveCategories() {
+        return CategoryService.getCategories().then((response) => {
+          this.categories = response.data.data;
+          
+        })
+        .catch((e) => {
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
+        });
+      },
       getWorker(){
       this.worker = JSON.parse(localStorage.getItem('worker'));
     },
@@ -318,6 +395,7 @@ export default {
     
     async mounted() {
       await this.getWorker();
+      await this.retrieveCategories();
       this.retrieveConnectors(this.worker.ID);
     }
 

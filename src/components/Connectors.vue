@@ -47,8 +47,23 @@
           <div class="v-card__title align-start">
             <div class="overflow-hidden mt-n9 transition-swing v-card--material__sheet v-sheet theme--light elevation-6 orange accent-4 " style="max-width: 100%; width: 100%;">
               <div class="pa-10 white--text">
+           
+                  
                 <div class="text-h5 font-weight-light"> Connectors on http://{{worker.name}}:{{worker.port}}/ </div>
-                </div></div></div>
+                <div class="text-h5 font-weight-light"> 
+                  <v-chip-group
+                  active-class="primary--text"
+                  column
+                  >
+                  <v-chip
+                    v-for="category in selectedCategoriesNames"
+                    :key="category"
+                  >
+                    {{ category }}
+                  </v-chip>
+                </v-chip-group>
+                </div>
+              </div></div></div>
                    
   
             <v-progress-linear
@@ -146,6 +161,13 @@
                   <span>Edit connector</span>
               </v-tooltip>
               <v-tooltip bottom>
+              
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on"  @click="openCategoryDialog(item.ID)">mdi-filter</v-icon>
+                </template>
+                  <span>Tags</span>
+              </v-tooltip>
+              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-icon  v-on="on" color="red darken-2" @click="deleteConnector(item.ID)">mdi-close</v-icon>
                 </template>
@@ -164,7 +186,7 @@
         <v-dialog
           v-model="catsDialog"
           @keydown.esc="this.catsDialog = false"
-          max-width="400">  
+          max-width="800">  
           <v-card>
         <v-card-title >
           Categories
@@ -177,6 +199,7 @@
           :items="categories"
           :item-text="'name'"
           :item-value="'ID'"
+          small-chips
           >
             
           </v-combobox>
@@ -196,6 +219,55 @@
       </v-card>
          
           </v-dialog>
+
+          <v-dialog
+          v-model="connectorCatsDialog"
+          @keydown.esc="this.connectorCatsDialog = false"
+          max-width="800">  
+          <v-card>
+        <v-card-title >
+          Categories
+        </v-card-title>
+
+        <v-card-text>
+          <v-combobox
+          multiple
+          v-model="selectedCategoriesForConnector"
+          :items="categories"
+          :search-input.sync="newSearch"
+          :item-text="'name'"
+          :item-value="'ID'"
+          small-chips
+          persistent-hint
+          hide-selected
+          >
+            <template v-slot:no-data>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>
+              No results matching "<strong>{{ newSearch }}</strong>". Press <kbd>enter</kbd> to create a new one
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+          </v-combobox>
+
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="addCategoriesForConnector(selectedCategoriesForConnector)"
+          >
+            Save 
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+         
+          </v-dialog>
       </v-col>
     </v-row>
   </div>
@@ -209,13 +281,19 @@ export default {
   name: "connectors",
   data() {
     return {
+      selectedCategoriesForConnector:[],
       selectedCategories:[],
+      selectedCategoriesNames:[],
       catsDialog:false,
+      connectorCatsDialog:false,
       show:false,
       selected :[],
-      search:"",
+      newSearch:"",
       connectors: [],
+      searchCBox: null,
       categories:[],
+      storeElements:[],
+      selectedConnector:"",
       worker:JSON.parse(localStorage.getItem('worker')),
       headers: [
         { text: "Name", value: "name", align: "center", sortable: true, class: 'my-header-style'},
@@ -236,11 +314,42 @@ export default {
     };
   },
   methods:{
+    addCategoriesForConnector(categs){
+      this.retrieveCategories();
+      console.log(this.selectedConnector);
+      console.log(categs);
+    },
+    openCategoryDialog(id){
+      this.selectedConnector = id;
+      this.connectorCatsDialog = true;  
+      this.selectedCategoriesForConnector =[];
+      ConnectorService.getCategoryOfConnector(id).then((response) => {
+          
+          let selectedCatIds = response.data.data.category_ids.split(",")
+          this.categories.forEach(element => {
+              if (selectedCatIds.includes(element.ID.toString())){
+                this.selectedCategoriesForConnector.push(element);
+              }
+          });
+          
+        })
+        .catch((e) => {
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
+        });
+
+    },
     filterConnectors(categories){
       let categoriesID = [];
+      this.selectedCategoriesNames = [];
       categories.forEach(element => {
         categoriesID.push(element.ID);
+        this.selectedCategoriesNames.push(element.name);
       });
+        if (categoriesID.length!=0){
         CategoryService.getConnectorByCategories(categoriesID).then((response) => {
           this.connectors = response.data.data;
         })
@@ -251,6 +360,9 @@ export default {
                       show: true
                     };
         });
+        }else{
+          this.retrieveConnectors(this.worker.ID);
+        }
     },
     showCategories(){
       this.catsDialog=true;
@@ -273,7 +385,19 @@ export default {
       
       
     },
-
+    postCategory(name){
+  
+      return CategoryService.postCategories(name).then(() => {
+         this.retrieveCategories();
+        })
+        .catch((e) => {
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
+        });
+    },
     startConnectors(){
 
       let connectors =[];
@@ -397,7 +521,16 @@ export default {
       await this.getWorker();
       await this.retrieveCategories();
       this.retrieveConnectors(this.worker.ID);
-    }
+    },
+    // watch:{
+    //   // selectedCategoriesForConnector: function(newSelected,oldSelected){
+    //   // var difference = newSelected.filter(x => !oldSelected.includes(x));
+    //   // if (difference[0]!=="" && difference[0] !== undefined && difference[0] !==null && !this.categories.includes(difference[0])){
+    //   //   this.postCategory(difference[0]);
+    //   // }
+        
+    //   }
+    // }
 
 };
 </script>

@@ -20,5 +20,15 @@ class CategoryService {
       },
   });
 }
+postCategories(category) {
+  return axios.post(endpoint.baseURL+`category/create`,{
+      "name": category
+  },
+  {
+    headers:{
+        'Authorization': 'Bearer ' + user.data.token
+    },
+});
+}
 }
   export default new CategoryService();

@@ -11,6 +11,13 @@ class ConnectorService {
     });
   }
 
+  getCategoryOfConnector(id) {
+    return axios.get(endpoint.baseURL+`connectors/categories/${id}`,{
+      headers:{
+          'Authorization': 'Bearer ' + user.data.token
+      },
+  });
+}
   postConnector(connector){
       return axios.post(endpoint.baseURL+`connectors`,{
         "name": connector.name,

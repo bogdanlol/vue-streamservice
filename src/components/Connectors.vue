@@ -314,10 +314,40 @@ export default {
     };
   },
   methods:{
-    addCategoriesForConnector(categs){
-      this.retrieveCategories();
-      console.log(this.selectedConnector);
-      console.log(categs);
+    async addCategoriesForConnector(categs){
+      let categsToAdd=[];
+      let finalCategs=[];
+      categs.forEach(element => {
+        if (typeof element == "string" ||  element instanceof String){
+          categsToAdd.push(element);
+        }
+      });
+      if (categsToAdd.length!=0){
+       await this.postCategory(categsToAdd);
+      }
+      if (categs){
+        categs.forEach(element => {
+          if (typeof element == "string" ||  element instanceof String){
+            finalCategs.push(element);
+            }else{
+              finalCategs.push(element.name);
+            }
+        });
+      }
+      this.putCategoriesForConnector(this.selectedConnector,finalCategs);
+    },
+    putCategoriesForConnector(connector_id,categories){
+      CategoryService.putCategoriesForConnector(connector_id,categories).then((response) => {
+          console.log(response)
+          
+        })
+        .catch((e) => {
+        this.snackbar = {
+                      message: 'Errors: '+ e,
+                      color: 'error',
+                      show: true
+                    };
+        });
     },
     openCategoryDialog(id){
       this.selectedConnector = id;

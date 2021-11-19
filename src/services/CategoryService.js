@@ -22,7 +22,17 @@ class CategoryService {
 }
 postCategories(category) {
   return axios.post(endpoint.baseURL+`category/create`,{
-      "name": category
+      "categories": category
+  },
+  {
+    headers:{
+        'Authorization': 'Bearer ' + user.data.token
+    },
+});
+}
+putCategoriesForConnector(connector_id,category) {
+  return axios.put(endpoint.baseURL+`conn/${connector_id}/categories`,{
+      "categories": category
   },
   {
     headers:{

@@ -231,7 +231,6 @@
 
         <v-card-text>
           <v-combobox
-          multiple
           v-model="selectedCategoriesForConnector"
           :items="categories"
           :search-input.sync="newSearch"
@@ -281,12 +280,13 @@ export default {
   name: "connectors",
   data() {
     return {
-      selectedCategoriesForConnector:[],
+      selectedCategoriesForConnector:"",
       selectedCategories:[],
       selectedCategoriesNames:[],
       catsDialog:false,
       connectorCatsDialog:false,
       show:false,
+      search:"",
       selected :[],
       newSearch:"",
       connectors: [],
@@ -314,31 +314,20 @@ export default {
     };
   },
   methods:{
-    async addCategoriesForConnector(categs){
-      let categsToAdd=[];
-      let finalCategs=[];
-      categs.forEach(element => {
-        if (typeof element == "string" ||  element instanceof String){
-          categsToAdd.push(element);
-        }
-      });
-      if (categsToAdd.length!=0){
-       await this.postCategory(categsToAdd);
-      }
-      if (categs){
-        categs.forEach(element => {
-          if (typeof element == "string" ||  element instanceof String){
-            finalCategs.push(element);
-            }else{
-              finalCategs.push(element.name);
-            }
-        });
-      }
-      this.putCategoriesForConnector(this.selectedConnector,finalCategs);
+    async addCategoriesForConnector(categ){
+ 
+
+      if (typeof categ == "string" ||  categ instanceof String){
+        await this.postCategory(categ);
+      } 
+
+    
+     
+      this.putCategoriesForConnector(this.selectedConnector,categ);
+      // this.connectorCatsDialog = false;  
     },
-    putCategoriesForConnector(connector_id,categories){
-      CategoryService.putCategoriesForConnector(connector_id,categories).then((response) => {
-          console.log(response)
+    putCategoriesForConnector(connector_id,category){
+      CategoryService.putCategoriesForConnector(connector_id,category).then(() => {
           
         })
         .catch((e) => {
@@ -352,13 +341,13 @@ export default {
     openCategoryDialog(id){
       this.selectedConnector = id;
       this.connectorCatsDialog = true;  
-      this.selectedCategoriesForConnector =[];
+  
       ConnectorService.getCategoryOfConnector(id).then((response) => {
           
-          let selectedCatIds = response.data.data.category_ids.split(",")
+          let selectedCatId = response.data.data.category_id;
           this.categories.forEach(element => {
-              if (selectedCatIds.includes(element.ID.toString())){
-                this.selectedCategoriesForConnector.push(element);
+              if (selectedCatId == element.ID){
+                this.selectedCategoriesForConnector = element;
               }
           });
           
@@ -393,6 +382,7 @@ export default {
         }else{
           this.retrieveConnectors(this.worker.ID);
         }
+        this.catsDialog = false;
     },
     showCategories(){
       this.catsDialog=true;

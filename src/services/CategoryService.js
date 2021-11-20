@@ -22,7 +22,7 @@ class CategoryService {
 }
 postCategories(category) {
   return axios.post(endpoint.baseURL+`category/create`,{
-      "categories": category
+      "category": category
   },
   {
     headers:{
@@ -32,7 +32,7 @@ postCategories(category) {
 }
 putCategoriesForConnector(connector_id,category) {
   return axios.put(endpoint.baseURL+`conn/${connector_id}/categories`,{
-      "categories": category
+      "category": category
   },
   {
     headers:{

@@ -429,7 +429,7 @@ export default {
         connectors.push(element.ID)
       });
       ConnectorService.startConnectors(this.worker.ID,connectors).then(() => {
-         this.retrieveConnectors(this.worker.ID);
+        this.retrieveConnectors(this.worker.ID);
          //this.$router.go();
         })
         .catch((e) => {
@@ -459,7 +459,7 @@ export default {
     startConnector(id){
       this.show=true;
       ConnectorService.startConnector(id,this.worker.ID).then(() => {
-         this.retrieveConnectors(this.worker.ID);
+        this.retrieveConnectors(this.worker.ID);
         })
         .catch((e) => {
         this.snackbar = {
@@ -499,6 +499,7 @@ export default {
         });
     },
     retrieveConnectors(id) {
+        this.show=true;
         ConnectorService.getConnectors(id).then((response) => {
           this.connectors = response.data.data;
           this.connectors.forEach(element => {

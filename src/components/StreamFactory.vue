@@ -17,6 +17,12 @@
             text-align="center"
             align="center"
           >
+          <v-progress-linear
+            :active="show"
+            :indeterminate="show"
+            absolute
+            color="deep-purple accent-4"
+            ></v-progress-linear>
             <v-sheet
               
               min-height="50vh"
@@ -108,6 +114,14 @@
         <v-card-text style="height: 150px; width:180px;"/>      
         </v-card>
         </v-dialog>
+        <v-snackbar 
+          :timeout="3000"
+          bottom
+          outlined
+          :color="snackbar.color" 
+          v-model="snackbar.show">
+            {{ snackbar.message }}
+        </v-snackbar>
         </div>
     
       
@@ -121,12 +135,18 @@ export default {
   name: "stream-factory",
   data() {
     return {
+      show:false,
       uploadConfig : false,
       uploadInput: false,
       worker:JSON.parse(localStorage.getItem('worker')),
       config:"",
       input:"",
       files: [],
+       snackbar: {
+                show: false,
+                message: null,
+                color: null,
+            },
       }
   },
   methods:{
@@ -139,11 +159,13 @@ export default {
         this.uploadInput = false;
     },
     generateSolution(){
+      this.show=true;
         let formData = new FormData();
         formData.append('config', this.config);
         formData.append('input',this.input);
       
        StreamFactoryService.postStreamFactoryService(formData).then((response)=>{
+            this.show=false;
             var fileURL = window.URL.createObjectURL(new Blob([response.data]));
             var fileLink = document.createElement('a');
   

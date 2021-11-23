@@ -17,20 +17,30 @@ class WorkerService {
         })
     }
     postStopKafkaConnect(id) {
-        return axios.post(endpoint.baseURL+`workers/${id}/stop`,{
+        try {
+            user = JSON.parse(localStorage.getItem("user"))
+          } catch {
+            return
+          }
+        return axios.post(endpoint.baseURL+`workers/${id}/stop`,{},{
             headers:{
                 'Authorization': 'Bearer ' + user.data.token
             },
         });
     }
     postStartKafkaConnect(id) {
-        return axios.post(endpoint.baseURL+`workers/${id}/start`,{
+        return axios.post(endpoint.baseURL+`workers/${id}/start`,{},{
             headers:{
                 'Authorization': 'Bearer ' + user.data.token
             },
         });
     }
     getWorker(id){
+        try {
+            user = JSON.parse(localStorage.getItem("user"))
+          } catch {
+            return
+          }
         return axios.get(endpoint.baseURL+`worker/${id}`,
         {
             headers:{
@@ -39,6 +49,11 @@ class WorkerService {
         });
     }
     postWorker(worker){
+        try {
+            user = JSON.parse(localStorage.getItem("user"))
+          } catch {
+            return
+          }
         return axios.post(endpoint.baseURL+`worker`,{
           "name": worker.name,
           "teamId": worker.team,
@@ -54,6 +69,11 @@ class WorkerService {
 
     }
     editWorker(worker,id){
+        try {
+            user = JSON.parse(localStorage.getItem("user"))
+          } catch {
+            return
+          }
         return axios.put(endpoint.baseURL+`worker/${id}`,{
             "sshKey":worker.sshKey,
             "ip": worker.ip,

@@ -9,6 +9,12 @@
             cols="12"
             sm="3"
           >
+          <v-progress-linear
+            :active="isLoading"
+            :indeterminate="isLoading"
+            absolute
+            color="deep-purple accent-4"
+            ></v-progress-linear>
             <v-sheet
               rounded="lg"
               min-height="73vh"
@@ -19,21 +25,32 @@
                 <h4 class="text-center">Worker Information <v-icon x-large>mdi-information-outline</v-icon></h4>
                 </v-toolbar>
                 <v-card-title class="justify-center"></v-card-title>
-                <div class="send">
-                <div class ="row">
-                  <div class="col">Worker name </div>  <div class="col-3">{{name}}</div> 
-                </div>
-                <div class ="row">
-                  <div class="col">Connect path </div>  <div class="col">{{path}}</div> 
-                </div>
-                <div class ="row">
-                  <div class="col">Worker port </div>  <div class="col-3">{{port}}</div> 
-                </div>
-                <div class ="row">
-                  <div class="col">Worker status </div>  <div class="col">{{status}}</div> 
-                </div>
-                <br><p></p>
-                </div>
+                <v-form class="send">
+                 <v-text-field
+                v-model="name"
+                disabled
+                label="Worker name"
+                required
+              ></v-text-field>
+                 <v-text-field
+                v-model="path"
+                disabled
+                label="Connect path"
+                required
+              ></v-text-field>
+                 <v-text-field
+                v-model="port"
+                disabled
+                label="Worker port"
+                required
+              ></v-text-field>
+                 <v-text-field
+                v-model="status"
+                disabled
+                label="Worker Status"
+                required
+              ></v-text-field>
+                </v-form>
               </div>
             </v-card>
             </v-sheet>
@@ -168,6 +185,14 @@
           </v-col>
         </v-row>
       </v-container>
+      <v-snackbar 
+          :timeout="3000"
+          bottom
+          outlined
+          :color="snackbar.color" 
+          v-model="snackbar.show">
+            {{ snackbar.message }}
+        </v-snackbar>
     </v-main>
   </v-app>
 </template>
@@ -179,6 +204,7 @@ export default {
   name: "worker",
   data() {
     return {
+        isLoading:true,
         environments:['TST','DEV','ACC','PRD'],
         environment:"",
         sshKey:"",
@@ -240,10 +266,10 @@ export default {
   
   },
   async mounted(){
- 
+    
     await WorkerService.getWorker(this.$route.params.id)
         .then((response) => {
-  
+        
         this.name=response.data.data.worker.name;
         this.path=response.data.data.worker.path;
         this.port=response.data.data.worker.port;
@@ -253,13 +279,13 @@ export default {
         this.environment =response.data.data.worker.environment;
         this.sshKey = response.data.data.worker.sshKey;
         this.ip = response.data.data.worker.ip;
-
+      
          if (response.data.data.connectors && response.data.data.connectors.length !=0){
            this.status = "Connectors are running on this worker"
          }else{
            this.status = "Connectors are not running on this worker"
          }
-        
+        this.isLoading=false;
 
         })
         .catch((e) => {

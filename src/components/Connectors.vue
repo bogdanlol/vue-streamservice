@@ -85,20 +85,12 @@
             :items-per-page="5"
             class="elevation-1"
             >
-       
-
-        
-  
+ 
 
            <template
           v-if="this.selected.length > 1 ? true : false"
           v-slot:footer
           >
-         
-   
-
-    
-          
 
           <v-col>
           <v-row>
@@ -269,6 +261,14 @@
           </v-dialog>
       </v-col>
     </v-row>
+     <v-snackbar 
+          :timeout="3000"
+          bottom
+          outlined
+          :color="snackbar.color" 
+          v-model="snackbar.show">
+            {{ snackbar.message }}
+        </v-snackbar>
   </div>
   
 </template>
@@ -319,16 +319,22 @@ export default {
 
       if (typeof categ == "string" ||  categ instanceof String){
         await this.postCategory(categ);
+        this.putCategoriesForConnector(this.selectedConnector,categ);
+        this.connectorCatsDialog = false;  
       } 
-
-    
-     
-      this.putCategoriesForConnector(this.selectedConnector,categ);
-      // this.connectorCatsDialog = false;  
+      else{
+      this.putCategoriesForConnector(this.selectedConnector,categ.name);
+      this.connectorCatsDialog = false;  
+      }
     },
     putCategoriesForConnector(connector_id,category){
       CategoryService.putCategoriesForConnector(connector_id,category).then(() => {
-          
+           this.snackbar = {
+                      message: "Category has been saved",
+                      color: 'green',
+                      show: true
+                    };
+     
         })
         .catch((e) => {
         this.snackbar = {
@@ -362,6 +368,7 @@ export default {
 
     },
     filterConnectors(categories){
+      this.show=true;
       let categoriesID = [];
       this.selectedCategoriesNames = [];
       categories.forEach(element => {
@@ -371,6 +378,7 @@ export default {
         if (categoriesID.length!=0){
         CategoryService.getConnectorByCategories(categoriesID).then((response) => {
           this.connectors = response.data.data;
+          this.show=false;
         })
         .catch((e) => {
         this.snackbar = {
@@ -459,7 +467,12 @@ export default {
     startConnector(id){
       this.show=true;
       ConnectorService.startConnector(id,this.worker.ID).then(() => {
-        this.retrieveConnectors(this.worker.ID);
+        this.connectors.forEach(element => {
+          if (element.ID == id){
+            element.status = 'RUNNING';
+          }
+        });
+        this.show=false;
         })
         .catch((e) => {
         this.snackbar = {
@@ -488,7 +501,12 @@ export default {
     stopConnector(name){
       this.show=true;
       ConnectorService.stopConnector(name,this.worker.ID).then(() => {
-          this.retrieveConnectors(this.worker.ID);
+          this.connectors.forEach(element => {
+          if (element.name == name){
+            element.status = 'NOT RUNNING';
+          }
+        });
+        this.show=false;
         })
         .catch((e) => {
         this.snackbar = {

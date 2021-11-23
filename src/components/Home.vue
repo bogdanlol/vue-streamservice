@@ -12,7 +12,7 @@
           </v-icon>
         </v-btn>
     </v-container>
- 
+  
     <v-dialog
       v-model="addWorkerDialog"
       persistent
@@ -33,6 +33,7 @@
         </v-col>
 
       </template>
+      
       <v-card>
         <v-card-title>
           <span class="text-h5">Add New Worker</span>
@@ -132,7 +133,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
+   
     <v-row align="center" >
 
       <v-col cols="12" md="5">
@@ -158,7 +159,12 @@
               <div class="pa-8 white--text">
                 <div class="text-h4 font-weight-light"> Workers available</div>
                 </div></div></div>
-
+            <v-progress-linear
+            :active="isLoading"
+            :indeterminate="isLoading"
+            absolute
+            color="deep-purple accent-4"
+            ></v-progress-linear>
           <v-data-table
             :headers="headers"
             :items="workers"
@@ -180,7 +186,7 @@
              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-icon v-if="item.status != 'RUNNING'"  v-on="on"  color="blue darken-2" @click="startKafkaConnect(item.ID)">mdi-play</v-icon>
-                  <v-icon v-else-if="item.status =='RUNNING'" v-on="on"  color="red darken-2" @click="stopKafkaConnect(item.name)">mdi-stop</v-icon>
+                  <v-icon v-else-if="item.status =='RUNNING'" v-on="on"  color="red darken-2" @click="stopKafkaConnect(item.ID)">mdi-stop</v-icon>
                 </template>
                     <span  v-if="item.status != 'RUNNING'">Start Worker</span>
                     <span  v-else-if="item.status =='RUNNING'">Stop Worker</span>
@@ -209,16 +215,15 @@
         </div>
       </v-col>
     </v-row>
-    <v-overlay
-    :value="isLoading"
-    :opacity="1"
-    >
-      <v-progress-circular
-      :size="35"
-      color="amber"
-      indeterminate
-    ></v-progress-circular>
-    </v-overlay>
+    <v-snackbar 
+          :timeout="3000"
+          bottom
+          outlined
+          :color="snackbar.color" 
+          v-model="snackbar.show">
+            {{ snackbar.message }}
+        </v-snackbar>
+    
   </div>
 </template>
 <script>
@@ -283,10 +288,16 @@ export default{
      this.$router.go();
     },
     startKafkaConnect(id){
+      this.isLoading=true;
       workerService.postStartKafkaConnect(id).then(() => {
           
           
-         this.$router.go()
+         this.workers.forEach(element => {
+           if(element.ID == id ){
+             element.status ="RUNNING"
+           }
+         });
+         this.isLoading=false;
         })
         .catch((e) => {
           this.snackbar = {
@@ -298,9 +309,15 @@ export default{
         });
     },
     stopKafkaConnect(id){
+      this.isLoading=true;
       workerService.postStopKafkaConnect(id).then(() => {
          
-          this.$router.go();
+          this.workers.forEach(element => {
+           if(element.ID == id ){
+             element.status ="STOPPED"
+           }
+         });
+         this.isLoading=false;
         })
         .catch((e) => {
         this.snackbar = {

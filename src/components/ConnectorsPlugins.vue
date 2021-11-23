@@ -42,6 +42,12 @@
               <div class="pa-10 white--text">
                 <div class="text-h5 font-weight-light"> Connectors Plugins on http://localhost:8083/ </div>
                 </div></div></div>
+           <v-progress-linear
+            :active="show"
+            :indeterminate="show"
+            absolute
+            color="deep-purple accent-4"
+            ></v-progress-linear>
 
           <v-data-table
             :headers="headers"
@@ -88,7 +94,14 @@
         </div>
       </v-col>
     </v-row>
-      
+      <v-snackbar 
+          :timeout="3000"
+          bottom
+          outlined
+          :color="snackbar.color" 
+          v-model="snackbar.show">
+            {{ snackbar.message }}
+        </v-snackbar>
   </div>
 </template>
 <script>
@@ -99,6 +112,7 @@ export default {
   name: "connectors",
   data() {
     return {
+      show : true,
       uploadDialog : false,
       search:"",
       connectorsPlugins: [],
@@ -110,6 +124,11 @@ export default {
         { text: "Version", value: "version", align: "center", sortable: true, class: 'my-header-style' },
 
       ],
+       snackbar: {
+                show: false,
+                message: null,
+                color: null,
+            },
     };
   },
   methods:{
@@ -137,6 +156,7 @@ export default {
     },
     retrieveConnectorsPlugins(id) {
         ConnectorService.getConnectorClasses(id).then((response) => {
+          this.show=false;
           this.connectorsPlugins = response.data.data;
         })
         .catch((e) => {

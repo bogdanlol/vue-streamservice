@@ -215,7 +215,14 @@
     </v-row>
       
   </div>
-  
+  <v-snackbar 
+          :timeout="3000"
+          bottom
+          outlined
+          :color="snackbar.color" 
+          v-model="snackbar.show">
+            {{ snackbar.message }}
+        </v-snackbar>
 </div>
 </v-container>
     

@@ -1,13 +1,17 @@
-FROM node:15.0.0
+FROM node:lts-alpine as build-stage
 
-ENV NODE_ENV=development
+WORKDIR /vue-streamservice
 
-WORKDIR /streamservice-app/vue-streamservice
-
-COPY ["package.json", "package-lock.json*", "./"]
+COPY package*.json ./
 
 RUN npm install
 
 COPY . .
 
+# build app for development
 CMD [ "npm", "run", "serve" ]
+
+# build app for production
+#CMD [ "npm", "run", "build" ]
+
+EXPOSE 8080 80
